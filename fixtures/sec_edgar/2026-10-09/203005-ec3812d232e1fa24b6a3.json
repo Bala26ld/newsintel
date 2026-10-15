@@ -1,0 +1,29 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990005/000999000526100009/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-09T20:30:05Z",
+ "source_published_at": "2026-10-09T20:30:00Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990005",
+  "registrant": "Tessaro Pharmaceuticals, Inc.",
+  "accession": "0009990005-26-100009",
+  "form": "8-K",
+  "filing_date": "2026-10-09",
+  "acceptance": "2026-10-09T20:30:00Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "2.02"
+  ],
+  "tickers": [
+   "TSRO"
+  ],
+  "synthetic": true,
+  "label": "earnings_tsro"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 9, 2026</div>\n<div><b>Tessaro Pharmaceuticals, Inc.</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41005</td><td>86-410050</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 2.02 Results of Operations and Financial Condition.</b></div>\n<p>On October 9, 2026, Tessaro Pharmaceuticals, Inc. reported results for the third quarter ended September 30, 2026. Net revenues were $214 million. Net income was $19 million, or $0.22 per diluted share.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Tessaro Pharmaceuticals, Inc.</div>\n<div>Date: October 9, 2026</div>\n</body></html>"
+}

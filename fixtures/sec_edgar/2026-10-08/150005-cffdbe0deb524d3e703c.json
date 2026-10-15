@@ -1,0 +1,30 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990004/000999000426100008/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-08T15:00:05Z",
+ "source_published_at": "2026-10-08T15:00:00Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990004",
+  "registrant": "Pinecrest Bancorp, Inc.",
+  "accession": "0009990004-26-100008",
+  "form": "8-K",
+  "filing_date": "2026-10-08",
+  "acceptance": "2026-10-08T15:00:00Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "1.01",
+   "2.03"
+  ],
+  "tickers": [
+   "PNCB"
+  ],
+  "synthetic": true,
+  "label": "credit_agreement"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 8, 2026</div>\n<div><b>Pinecrest Bancorp, Inc.</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41004</td><td>86-410040</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 1.01 Entry into a Material Definitive Agreement.</b></div>\n<p>On October 8, 2026, Pinecrest Bancorp, Inc. entered into a credit agreement with a syndicate of lenders providing for a $200 million revolving credit facility maturing in 2031.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Pinecrest Bancorp, Inc.</div>\n<div>Date: October 8, 2026</div>\n</body></html>"
+}

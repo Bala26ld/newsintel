@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16
+    environment: { POSTGRES_USER: newsintel, POSTGRES_PASSWORD: newsintel, POSTGRES_DB: newsintel }
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment: { MINIO_ROOT_USER: newsintel, MINIO_ROOT_PASSWORD: newsintel123 }
+    ports: ["9000:9000", "9001:9001"]
+    volumes: ["miniodata:/data"]
+  api:
+    build: .
+    command: newsintel serve --host 0.0.0.0 --port 8000 --with-pipeline
+    environment:
+      NEWSINTEL_DATABASE_URL: postgresql+psycopg://newsintel:newsintel@postgres:5432/newsintel
+      NEWSINTEL_BUS: redis
+      NEWSINTEL_REDIS_URL: redis://redis:6379/0
+    env_file: [.env]
+    ports: ["8000:8000"]
+    depends_on: [postgres, redis]
+    volumes: ["./fixtures:/app/fixtures", "./data:/app/data"]
+  poller:
+    build: .
+    command: newsintel poll
+    environment:
+      NEWSINTEL_DATABASE_URL: postgresql+psycopg://newsintel:newsintel@postgres:5432/newsintel
+      NEWSINTEL_BUS: redis
+      NEWSINTEL_REDIS_URL: redis://redis:6379/0
+    env_file: [.env]
+    depends_on: [postgres, redis]
+    volumes: ["./fixtures:/app/fixtures", "./data:/app/data"]
+volumes: { pgdata: {}, miniodata: {} }

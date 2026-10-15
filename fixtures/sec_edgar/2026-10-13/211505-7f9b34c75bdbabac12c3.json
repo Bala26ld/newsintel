@@ -1,0 +1,29 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990008/000999000826100015/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-13T21:15:05Z",
+ "source_published_at": "2026-10-13T21:15:00Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990008",
+  "registrant": "Velmont Software, Inc.",
+  "accession": "0009990008-26-100015",
+  "form": "8-K",
+  "filing_date": "2026-10-13",
+  "acceptance": "2026-10-13T21:15:00Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "5.02"
+  ],
+  "tickers": [
+   "VLMT"
+  ],
+  "synthetic": true,
+  "label": "cto_appointed"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 13, 2026</div>\n<div><b>Velmont Software, Inc.</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41008</td><td>86-410080</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 5.02 Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers.</b></div>\n<p>On October 13, 2026, the Board of Directors of Velmont Software, Inc. appointed Priya Raghunathan as Chief Technology Officer effective October 20, 2026.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Velmont Software, Inc.</div>\n<div>Date: October 13, 2026</div>\n</body></html>"
+}

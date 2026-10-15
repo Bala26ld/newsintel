@@ -1,0 +1,187 @@
+# Golden set v0: human-checked labels for the synthetic EDGAR fixtures (keyed by fixture meta.label).
+# `fields` are the expected extracted values; money is compared by (amount, currency).
+# `outcome` is the expected gate/pipeline outcome when the fixtures are replayed in order.
+# `materiality_label` is a 1-5 editorial rating used to calibrate the score once there are 200+.
+version: 0
+cases:
+  earnings_q3:
+    event_type: earnings
+    entity_id: ent_fx_hald
+    fields:
+      period_end: "2026-09-30"
+      revenue: { amount: 4200000000, currency: USD }
+      net_income: { amount: 512000000, currency: USD }
+      diluted_eps: 1.84
+      guidance_revenue: { amount: 4400000000, currency: USD }
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  contract_award_doe:
+    event_type: contract_award
+    entity_id: ent_fx_hald
+    fields:
+      contract_value: { amount: 1100000000, currency: USD }
+      customer: "the United States Department of Energy"
+      duration_months: 60
+      division: "Energy Systems"
+      agreement_date: "2026-10-09"
+    outcome: published
+    status: verified_official
+    materiality_label: 4
+  contract_award_doe_refetch:
+    event_type: null
+    outcome: ingest_exact_duplicate
+  contract_award_doe_repeat:
+    event_type: contract_award
+    entity_id: ent_fx_hald
+    fields:
+      contract_value: { amount: 1100000000, currency: USD }
+      duration_months: 60
+      agreement_date: "2026-10-10"
+    outcome: merge
+    status: duplicate
+    materiality_label: 1
+  acquisition_clearwater:
+    event_type: acquisition
+    entity_id: ent_fx_mrfd
+    fields:
+      target: "Clearwater Organics, LLC"
+      consideration: { amount: 350000000, currency: USD }
+      completed_on: "2026-10-07"
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  cfo_change:
+    event_type: management_change
+    entity_id: ent_fx_mrfd
+    fields:
+      person: "Dana R. Whitlock"
+      role: "Chief Financial Officer"
+      change: resigned
+      successor: "Samuel Ortega"
+      effective_on: "2026-10-31"
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  earnings_loss:
+    event_type: earnings
+    entity_id: ent_fx_orbs
+    fields:
+      period_end: "2026-08-31"
+      revenue: { amount: 612000000, currency: USD }
+      net_income: { amount: -48000000, currency: USD }
+      diluted_eps: -0.31
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  contract_undisclosed:
+    event_type: contract_award
+    entity_id: ent_fx_orbs
+    fields:
+      customer: "Kestrel Automotive Systems"
+      agreement_date: "2026-10-13"
+    outcome: published
+    status: verified_official
+    materiality_label: 2
+  credit_agreement:
+    event_type: null
+    outcome: no_event
+  earnings_tsro:
+    event_type: earnings
+    entity_id: ent_fx_tsro
+    fields:
+      period_end: "2026-09-30"
+      revenue: { amount: 214000000, currency: USD }
+      net_income: { amount: 19000000, currency: USD }
+      diluted_eps: 0.22
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  earnings_tsro_amended:
+    event_type: earnings
+    entity_id: ent_fx_tsro
+    fields:
+      period_end: "2026-09-30"
+      revenue: { amount: 241000000, currency: USD }
+      net_income: { amount: 19000000, currency: USD }
+      diluted_eps: 0.22
+    outcome: published
+    status: corrected
+    correction: true
+    materiality_label: 3
+  earnings_nwlg:
+    event_type: earnings
+    entity_id: ent_fx_nwlg
+    fields:
+      period_end: "2026-09-30"
+      revenue: { amount: 890000000, currency: USD }
+      net_income: { amount: 41000000, currency: USD }
+      diluted_eps: 0.58
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  contract_skyline:
+    event_type: contract_award
+    entity_id: ent_fx_nwlg
+    fields:
+      contract_value: { amount: 95000000, currency: USD }
+      customer: "Skyline Freight Partners LLC"
+      duration_months: 36
+      agreement_date: "2026-10-14"
+    outcome: published
+    status: verified_official
+    materiality_label: 2
+  earnings_cstl:
+    event_type: earnings
+    entity_id: ent_fx_cstl
+    fields:
+      period_end: "2026-09-30"
+      revenue: { amount: 1500000000, currency: USD }
+      net_income: { amount: 120000000, currency: USD }
+      diluted_eps: 0.95
+    outcome: published
+    status: verified_official
+    materiality_label: 3
+  contract_large:
+    event_type: contract_award
+    entity_id: ent_fx_cstl
+    fields:
+      contract_value: { amount: 3600000000, currency: USD }
+      customer: "Meridian Power Cooperative"
+      duration_months: 120
+      agreement_date: "2026-10-15"
+    outcome: hold_review
+    status: verified_official
+    materiality_label: 5
+  cto_appointed:
+    event_type: management_change
+    entity_id: ent_fx_vlmt
+    fields:
+      person: "Priya Raghunathan"
+      role: "Chief Technology Officer"
+      change: appointed
+      effective_on: "2026-10-20"
+    outcome: published
+    status: verified_official
+    materiality_label: 2
+  earnings_brkw:
+    event_type: earnings
+    entity_id: ent_fx_brkw
+    fields:
+      period_end: "2026-09-30"
+      revenue: { amount: 780000000, currency: USD }
+      net_income: { amount: 66000000, currency: USD }
+    outcome: published
+    status: verified_official
+    materiality_label: 2
+  acquisition_lumen:
+    event_type: acquisition
+    entity_id: ent_fx_ashm
+    fields:
+      target: "Lumen Surgical Robotics, Inc."
+      consideration: { amount: 410000000, currency: USD }
+      stake_pct: 80.0
+      completed_on: "2026-10-15"
+    outcome: published
+    status: verified_official
+    materiality_label: 3

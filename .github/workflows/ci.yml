@@ -1,0 +1,16 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test-and-replay-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e ".[dev]"
+      - run: ruff check newsintel tests tools
+      - run: pytest -q
+      # Regression gate: replay the golden fixtures twice and fail on any difference
+      - run: newsintel replay --run-id ci-a > /dev/null && newsintel replay --run-id ci-b > /dev/null
+      - run: newsintel diff ci-a ci-b
+      - run: newsintel benchmark

@@ -1,0 +1,30 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990001/000999000126100001/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-09T14:31:40Z",
+ "source_published_at": "2026-10-09T13:31:40Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990001",
+  "registrant": "Halvard Dynamics Corporation",
+  "accession": "0009990001-26-100001",
+  "form": "8-K",
+  "filing_date": "2026-10-09",
+  "acceptance": "2026-10-09T13:31:40Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "1.01",
+   "9.01"
+  ],
+  "tickers": [
+   "HALD"
+  ],
+  "synthetic": true,
+  "label": "contract_award_doe_refetch"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 9, 2026</div>\n<div><b>Halvard Dynamics Corporation</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41001</td><td>86-410010</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 1.01 Entry into a Material Definitive Agreement.</b></div>\n<p>On October 9, 2026, Halvard Dynamics Corporation (the \"Company\") entered into a definitive agreement with the United States Department of Energy pursuant to which the Company will design and deliver grid-scale storage systems. The contract is valued at approximately $1.1 billion over a 5-year term and will be performed by the Company's Energy Systems segment.</p>\n<p>The foregoing description does not purport to be complete and is qualified in its entirety by reference to the agreement, a copy of which will be filed with the Company's next periodic report.</p>\n<div><b>Item 9.01 Financial Statements and Exhibits.</b></div>\n<p>99.1 Press release dated October 9, 2026.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Halvard Dynamics Corporation</div>\n<div>Date: October 9, 2026</div>\n</body></html>"
+}

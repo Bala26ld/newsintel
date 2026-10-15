@@ -1,0 +1,25 @@
+markets:
+  IN:
+    name: India
+    timezone: Asia/Kolkata
+    currency: INR
+    number_style: indian            # 1,00,00,000 ; crore / lakh words
+    fiscal_year_start_month: 4      # FY26 = Apr 2025 - Mar 2026
+    trading_days: [0, 1, 2, 3, 4]   # Monday=0
+    holidays_file: config/holidays/in.yaml
+  UK:
+    name: United Kingdom
+    timezone: Europe/London
+    currency: GBP
+    number_style: western
+    fiscal_year_start_month: 4
+    trading_days: [0, 1, 2, 3, 4]
+    holidays_file: config/holidays/uk.yaml
+  US:
+    name: United States
+    timezone: America/New_York
+    currency: USD
+    number_style: western
+    fiscal_year_start_month: 1      # company-specific fiscal years override this per entity
+    trading_days: [0, 1, 2, 3, 4]
+    holidays_file: config/holidays/us.yaml

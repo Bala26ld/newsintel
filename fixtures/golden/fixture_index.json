@@ -1,0 +1,92 @@
+{
+ "earnings_q3": {
+  "fixture": "sec_edgar/2026-10-06/200517-9baceaceceaaef061fc4.json",
+  "accession": "0009990001-26-100000",
+  "content_hash": "sha256:9baceaceceaaef061fc4e69a2e22a6e4344587d277d1687ee491fae582ea41e0"
+ },
+ "contract_award_doe": {
+  "fixture": "sec_edgar/2026-10-09/133145-36c4fd863cacc95f1be0.json",
+  "accession": "0009990001-26-100001",
+  "content_hash": "sha256:36c4fd863cacc95f1be0d3a775d6d6a77414e6b1453c08cebc92c312a64bfccf"
+ },
+ "contract_award_doe_refetch": {
+  "fixture": "sec_edgar/2026-10-09/143140-36c4fd863cacc95f1be0.json",
+  "accession": "0009990001-26-100001",
+  "content_hash": "sha256:36c4fd863cacc95f1be0d3a775d6d6a77414e6b1453c08cebc92c312a64bfccf"
+ },
+ "contract_award_doe_repeat": {
+  "fixture": "sec_edgar/2026-10-10/120215-054afbf5b87c81e6c6f5.json",
+  "accession": "0009990001-26-100003",
+  "content_hash": "sha256:054afbf5b87c81e6c6f53761a3c2c36f4722260d3012fa5675780dd425048268"
+ },
+ "acquisition_clearwater": {
+  "fixture": "sec_edgar/2026-10-07/211408-4b7a3501346ae54afb4b.json",
+  "accession": "0009990002-26-100004",
+  "content_hash": "sha256:4b7a3501346ae54afb4b8eb9ea7c4a431ec0f1c04cb42786f2d8d8f1bd07d0cd"
+ },
+ "cfo_change": {
+  "fixture": "sec_edgar/2026-10-12/204600-542eec99277e137a0a20.json",
+  "accession": "0009990002-26-100005",
+  "content_hash": "sha256:542eec99277e137a0a203d8a4c95160302f7d6aef723346be56a482b4e2d887e"
+ },
+ "earnings_loss": {
+  "fixture": "sec_edgar/2026-10-08/201005-5e78a09caee76ca78b07.json",
+  "accession": "0009990003-26-100006",
+  "content_hash": "sha256:5e78a09caee76ca78b075a6c5cfd0d5464b7f3aaa96c20b84f7af36fffa03fc7"
+ },
+ "contract_undisclosed": {
+  "fixture": "sec_edgar/2026-10-13/112035-df910d76c711aed7dbd4.json",
+  "accession": "0009990003-26-100007",
+  "content_hash": "sha256:df910d76c711aed7dbd4a0f555f21f2bed56fc8fd40de1d1457d857945d37593"
+ },
+ "credit_agreement": {
+  "fixture": "sec_edgar/2026-10-08/150005-cffdbe0deb524d3e703c.json",
+  "accession": "0009990004-26-100008",
+  "content_hash": "sha256:cffdbe0deb524d3e703c5cf1d21d2b8833ce144884570ee08ed09043eb5f694e"
+ },
+ "earnings_tsro": {
+  "fixture": "sec_edgar/2026-10-09/203005-ec3812d232e1fa24b6a3.json",
+  "accession": "0009990005-26-100009",
+  "content_hash": "sha256:ec3812d232e1fa24b6a3f3ab9bf54379dbe7cb1a5dc36edee17cce8d56e8772c"
+ },
+ "earnings_tsro_amended": {
+  "fixture": "sec_edgar/2026-10-10/140505-450a5f975ea5ed072241.json",
+  "accession": "0009990005-26-100010",
+  "content_hash": "sha256:450a5f975ea5ed072241671f7a89c968cc6e1d8ff65b2fb487d44f268964358e"
+ },
+ "earnings_nwlg": {
+  "fixture": "sec_edgar/2026-10-07/110005-2b813a3ad0d700451f8d.json",
+  "accession": "0009990006-26-100011",
+  "content_hash": "sha256:2b813a3ad0d700451f8df3d59139c315c1e853d94169a8486d05f33c99f71d57"
+ },
+ "contract_skyline": {
+  "fixture": "sec_edgar/2026-10-14/124005-f4c83aee8410f007b1ff.json",
+  "accession": "0009990006-26-100012",
+  "content_hash": "sha256:f4c83aee8410f007b1ff00402e6795c1eaa0445a40b405452d3cc0ab5c54ba39"
+ },
+ "earnings_cstl": {
+  "fixture": "sec_edgar/2026-10-06/210005-ba417ec779c2c9df3ebb.json",
+  "accession": "0009990007-26-100013",
+  "content_hash": "sha256:ba417ec779c2c9df3ebbb37939bb31b054c42a6ab7252a61e241db9f16b4b812"
+ },
+ "contract_large": {
+  "fixture": "sec_edgar/2026-10-15/110505-9b2e9a376ab910bd36b9.json",
+  "accession": "0009990007-26-100014",
+  "content_hash": "sha256:9b2e9a376ab910bd36b912bba965d55d37c2cbeec670290b5e440dea5ded8fb8"
+ },
+ "cto_appointed": {
+  "fixture": "sec_edgar/2026-10-13/211505-7f9b34c75bdbabac12c3.json",
+  "accession": "0009990008-26-100015",
+  "content_hash": "sha256:7f9b34c75bdbabac12c3cbf6a99271b25bb6b8bb8e7d635b858b7178eb67e6b4"
+ },
+ "earnings_brkw": {
+  "fixture": "sec_edgar/2026-10-14/205005-fa3e2f5ac219835a9b46.json",
+  "accession": "0009990009-26-100016",
+  "content_hash": "sha256:fa3e2f5ac219835a9b46a7c3c7a8f334e643d3c04e476c2c4f5f0a551a838859"
+ },
+ "acquisition_lumen": {
+  "fixture": "sec_edgar/2026-10-15/123005-a3ce241a3cbacd100deb.json",
+  "accession": "0009990010-26-100017",
+  "content_hash": "sha256:a3ce241a3cbacd100debd296c193ecdc8dfdf9954ff59bfaf1e92fdf69820c2f"
+ }
+}

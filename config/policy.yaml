@@ -1,0 +1,52 @@
+# Publication policy. Every threshold here is versioned with the alert that used it
+# (alerts.policy_version). Change the version when you change a value.
+version: 1
+
+gate:
+  duplicate_window_hours: 72          # structural fingerprint match inside this window = duplicate
+  corroborated_min_trust: 0.7         # trust score a secondary source needs before a corroborated report publishes
+  review_materiality: 0.8             # at or above this, extra review conditions apply
+  review_low_trust: 0.5               # ...hold if source trust is below this
+  review_amount_to_revenue: 0.25      # ...hold if amount exceeds this share of last reported revenue
+  reevaluate_after_minutes: 15        # held Developing events are re-evaluated after this
+
+# Corroborated (secondary-source) publishing is OFF for the MVP in every market.
+reporting_policy:
+  IN: { enabled: false, event_types: [] }
+  UK: { enabled: false, event_types: [] }
+  US: { enabled: false, event_types: [] }
+
+routing:
+  tier2_min_materiality: 0.6          # strong-model contradiction check
+  tier3_min_materiality: 0.8          # human review when any claim is unsupported
+
+materiality:
+  weights:
+    significance: 0.30
+    unexpectedness: 0.25
+    source_reliability: 0.20
+    breadth: 0.15
+    freshness: 0.10
+  # saturating curve for amount / last annual revenue -> significance
+  significance_curve: [[0.0, 0.0], [0.05, 0.2], [0.25, 0.6], [1.0, 0.95], [10.0, 1.0]]
+  type_prior:                          # used when no reference figure is available
+    contract_award: 0.5
+    acquisition: 0.6
+    earnings: 0.55
+    management_change: 0.45
+    regulatory_action: 0.6
+    macro_release: 0.7
+  breadth_floor:
+    macro_release: 0.8
+    regulatory_action: 0.5
+  bands: { high: 0.6, medium: 0.35 }   # decimal is never shown to users; bands are
+
+advisory_blocklist:                   # alert bodies containing these fail validation
+  - " buy "
+  - " sell "
+  - " short "
+  - "accumulate"
+  - "price target"
+  - "will rise"
+  - "will fall"
+  - "guaranteed"

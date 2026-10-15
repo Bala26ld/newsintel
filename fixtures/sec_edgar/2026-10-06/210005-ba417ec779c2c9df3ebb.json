@@ -1,0 +1,29 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990007/000999000726100013/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-06T21:00:05Z",
+ "source_published_at": "2026-10-06T21:00:00Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990007",
+  "registrant": "Castellan Energy Corporation",
+  "accession": "0009990007-26-100013",
+  "form": "8-K",
+  "filing_date": "2026-10-06",
+  "acceptance": "2026-10-06T21:00:00Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "2.02"
+  ],
+  "tickers": [
+   "CSTL"
+  ],
+  "synthetic": true,
+  "label": "earnings_cstl"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 6, 2026</div>\n<div><b>Castellan Energy Corporation</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41007</td><td>86-410070</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 2.02 Results of Operations and Financial Condition.</b></div>\n<p>On October 6, 2026, Castellan Energy Corporation reported results for the quarter ended September 30, 2026. Revenues were $1.5 billion. Net income was $120 million, or $0.95 per diluted share.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Castellan Energy Corporation</div>\n<div>Date: October 6, 2026</div>\n</body></html>"
+}

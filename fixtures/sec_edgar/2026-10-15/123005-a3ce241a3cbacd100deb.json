@@ -1,0 +1,29 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990010/000999001026100017/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-15T12:30:05Z",
+ "source_published_at": "2026-10-15T12:30:00Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990010",
+  "registrant": "Ashmere Medical Devices, Inc.",
+  "accession": "0009990010-26-100017",
+  "form": "8-K",
+  "filing_date": "2026-10-15",
+  "acceptance": "2026-10-15T12:30:00Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "2.01"
+  ],
+  "tickers": [
+   "ASHM"
+  ],
+  "synthetic": true,
+  "label": "acquisition_lumen"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 15, 2026</div>\n<div><b>Ashmere Medical Devices, Inc.</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41010</td><td>86-410100</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 2.01 Completion of Acquisition or Disposition of Assets.</b></div>\n<p>On October 15, 2026, Ashmere Medical Devices, Inc. completed the acquisition of 80% of the outstanding shares of Lumen Surgical Robotics, Inc. for cash consideration of approximately $410 million.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Ashmere Medical Devices, Inc.</div>\n<div>Date: October 15, 2026</div>\n</body></html>"
+}

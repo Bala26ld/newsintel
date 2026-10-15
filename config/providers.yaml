@@ -1,0 +1,26 @@
+# Model slots. Concrete model names are a benchmark decision (newsintel benchmark), not a code decision.
+# API keys come only from environment variables named in `api_key_env`; they are never logged.
+slots:
+  fast:
+    provider: anthropic
+    model: ${NEWSINTEL_FAST_MODEL:-claude-haiku-5-5}
+    api_key_env: ANTHROPIC_API_KEY
+    timeout_s: 8
+    max_tokens: 2000
+  strong:
+    provider: openai_compatible      # any OpenAI-compatible endpoint, including self-hosted
+    model: ${NEWSINTEL_STRONG_MODEL:-gpt-5}
+    base_url: ${NEWSINTEL_STRONG_BASE_URL:-https://api.openai.com/v1}
+    api_key_env: OPENAI_API_KEY
+    timeout_s: 20
+    max_tokens: 4000
+
+budgets:
+  per_provider_usd_per_hour: 5.00
+  per_event_max_tokens: 12000
+
+tasks:
+  extract:    { slot: fast,   fallback: deterministic }
+  summarise:  { slot: fast,   fallback: template }
+  contradict: { slot: strong, fallback: skip }
+  classify:   { slot: fast,   fallback: rules }

@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+.env
+newsintel.db*
+data/
+fixtures/golden/benchmark_report.json
+.pytest_cache/
+.ruff_cache/

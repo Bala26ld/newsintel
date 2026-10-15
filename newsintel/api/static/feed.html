@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>newsintel feed</title>
+<style>
+  :root { --bg:#f6f7f9; --panel:#fff; --ink:#15181d; --muted:#5f6670; --line:#e1e4e8; --accent:#1f5fbf; --high:#b42318; --medium:#b26a00; --low:#3b6; --tint:#eef3fb; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f1115; --panel:#171a20; --ink:#e8eaee; --muted:#9aa2ad; --line:#2a2f38; --accent:#7fb0ff; --high:#ff7b6b; --medium:#ffb84d; --low:#6ccf8a; --tint:#1b2230; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
+  header { display:flex; align-items:center; gap:16px; padding:10px 16px; border-bottom:1px solid var(--line); background: var(--panel); }
+  header h1 { font-size:15px; margin:0; letter-spacing:.02em; }
+  header .status { color: var(--muted); font-size:12px; }
+  main { display:grid; grid-template-columns: 220px minmax(320px, 1fr) minmax(360px, 1.2fr); gap:0; height: calc(100vh - 45px); }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; height:auto; } aside, #detail { border-left:none; } }
+  aside { padding:14px; border-right:1px solid var(--line); background: var(--panel); overflow:auto; }
+  aside label { display:block; font-size:12px; color: var(--muted); margin:10px 0 4px; }
+  aside select, aside input { width:100%; padding:6px; border:1px solid var(--line); border-radius:6px; background: var(--bg); color: var(--ink); }
+  #feed { overflow:auto; }
+  .row { padding:12px 16px; border-bottom:1px solid var(--line); cursor:pointer; }
+  .row:hover, .row.active { background: var(--tint); }
+  .row .meta { font-size:12px; color: var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
+  .row .head { font-weight:600; margin:2px 0 4px; }
+  .band { display:inline-block; font-size:11px; font-weight:600; padding:1px 6px; border-radius:10px; border:1px solid currentColor; }
+  .band.high { color: var(--high); } .band.medium { color: var(--medium); } .band.low { color: var(--low); }
+  .tag { font-size:11px; padding:1px 6px; border-radius:4px; background: var(--tint); color: var(--muted); }
+  .tag.correction { color: var(--high); }
+  #detail { padding:18px 22px; border-left:1px solid var(--line); background: var(--panel); overflow:auto; }
+  #detail h2 { font-size:17px; margin:0 0 6px; }
+  #detail h3 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color: var(--muted); margin:18px 0 6px; }
+  #detail ul { margin:0; padding-left:18px; }
+  #detail .ts { font-size:12px; color: var(--muted); }
+  #detail a { color: var(--accent); }
+  .claim { font-size:12px; border-left:3px solid var(--line); padding:4px 8px; margin:4px 0; }
+  .claim.unsupported { border-color: var(--high); }
+  .claim code { font-size:11px; background: var(--tint); padding:1px 4px; border-radius:3px; }
+  button { font: inherit; padding:5px 10px; border:1px solid var(--line); border-radius:6px; background: var(--bg); color: var(--ink); cursor:pointer; }
+  .empty { padding:30px; color: var(--muted); text-align:center; }
+  .notice { font-size:12px; color: var(--muted); padding:8px 16px; border-bottom:1px solid var(--line); }
+</style>
+</head>
+<body>
+<header>
+  <h1>newsintel · verified feed</h1>
+  <span class="status" id="status">connecting…</span>
+  <span class="status" id="runlabel"></span>
+</header>
+<div class="notice">Alerts report what official sources state. Nothing here is a recommendation to buy or sell anything.</div>
+<main>
+  <aside>
+    <label>API key</label><input id="key" placeholder="reader key">
+    <label>Market</label>
+    <select id="market"><option value="">All</option><option>US</option><option>UK</option><option>IN</option></select>
+    <label>Event type</label>
+    <select id="etype"><option value="">All</option><option value="contract_award">Contract award</option><option value="acquisition">Acquisition</option><option value="earnings">Earnings</option><option value="management_change">Management change</option><option value="regulatory_action">Regulatory action</option><option value="macro_release">Macro release</option></select>
+    <label>Minimum band</label>
+    <select id="band"><option value="low">Low and above</option><option value="medium">Medium and above</option><option value="high">High only</option></select>
+    <label>Entity filter (ticker or name)</label><input id="entity" placeholder="e.g. HALD">
+    <div style="margin-top:12px"><button id="reload">Reload</button></div>
+  </aside>
+  <section id="feed"><div class="empty">Loading…</div></section>
+  <section id="detail"><div class="empty">Select an alert to see confirmed facts, what is new, why it may matter, what is not established, and the evidence trail.</div></section>
+</main>
+<script>
+const qs = new URLSearchParams(location.search);
+const run = qs.get('run') || 'live';
+document.getElementById('runlabel').textContent = run === 'live' ? '' : 'viewing replay run: ' + run;
+const keyInput = document.getElementById('key');
+keyInput.value = qs.get('key') || localStorage.getItem('newsintel_key') || 'dev-reader-key';
+keyInput.addEventListener('change', () => { localStorage.setItem('newsintel_key', keyInput.value); load(); connect(); });
+const api = (path, params={}) => {
+  const u = new URL(path, location.origin);
+  Object.entries(params).forEach(([k,v]) => v && u.searchParams.set(k, v));
+  u.searchParams.set('run', run);
+  return fetch(u, { headers: { 'X-API-Key': keyInput.value } }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+};
+let alerts = [], active = null, es = null;
+const fmt = iso => iso ? new Date(iso).toLocaleString() : '—';
+function render() {
+  const feed = document.getElementById('feed');
+  const ent = document.getElementById('entity').value.trim().toLowerCase();
+  const rows = alerts.filter(a => !ent || (a.entity.name||'').toLowerCase().includes(ent) || (a.entity.ticker||'').toLowerCase() === ent);
+  if (!rows.length) { feed.innerHTML = '<div class="empty">No alerts match.</div>'; return; }
+  feed.innerHTML = rows.map(a => `
+    <div class="row ${active===a.row_id?'active':''}" data-id="${a.row_id}">
+      <div class="meta"><span class="band ${a.materiality_band}">${a.materiality_band}</span><span>${a.market}</span><span>${a.event_type.replace('_',' ')}</span><span>${a.entity.ticker||''}</span><span>${fmt(a.timestamps.published)}</span>${a.correction_of?'<span class="tag correction">correction v'+a.version+'</span>':''}${a.label?'<span class="tag">'+a.label+'</span>':''}</div>
+      <div class="head">${a.headline}</div>
+      <div class="meta"><span>${a.status.replace('_',' ')}</span><span>source ${fmt(a.timestamps.source)} · detected ${fmt(a.timestamps.detected)}</span></div>
+    </div>`).join('');
+  feed.querySelectorAll('.row').forEach(el => el.onclick = () => show(el.dataset.id));
+}
+function show(rowId) {
+  active = rowId; render();
+  const a = alerts.find(x => x.row_id === rowId); if (!a) return;
+  const li = arr => arr.map(s => `<li>${s.text || s}</li>`).join('');
+  document.getElementById('detail').innerHTML = `
+    <div class="ts">${a.market} · ${a.event_type.replace('_',' ')} · <span class="band ${a.materiality_band}">${a.materiality_band}</span> · ${a.status.replace('_',' ')} · v${a.version}${a.correction_of?' (corrects '+a.correction_of+')':''}</div>
+    <h2>${a.headline}</h2>
+    <div class="ts">Source published ${fmt(a.timestamps.source)} · detected ${fmt(a.timestamps.detected)} · published ${fmt(a.timestamps.published)}</div>
+    <h3>Confirmed facts</h3><ul>${li(a.confirmed_facts)}</ul>
+    <h3>What is new</h3><ul>${a.what_is_new ? li([a.what_is_new]) : '<li>—</li>'}</ul>
+    <h3>Why it may matter</h3><ul>${a.why_it_may_matter.length ? li(a.why_it_may_matter) : '<li>—</li>'}</ul>
+    <h3>Not established by the source</h3><ul>${li(a.not_established)}</ul>
+    <h3>Evidence</h3><ul>${a.evidence.map(e => `<li><a href="${e.url}" target="_blank" rel="noopener">${e.label}</a> · ${e.source_id} · ${fmt(e.published_at)} · <code>${e.hash.slice(0,19)}…</code></li>`).join('')}</ul>
+    <p><button id="evbtn">Show claim spans and decisions</button> <button id="storybtn">Story timeline</button></p>
+    <div id="evidence"></div>`;
+  document.getElementById('evbtn').onclick = () => api(`/v1/events/${a.event_id}/evidence`).then(ev => {
+    document.getElementById('evidence').innerHTML = `<h3>Claims (${ev.claims.length})</h3>` +
+      ev.claims.map(c => `<div class="claim ${c.check_status}"><code>${c.field}</code> = ${JSON.stringify(c.value)}${c.unit?' '+c.unit:''} · <em>“${c.span_text}”</em> [${c.span[0]}–${c.span[1]}] · ${c.check_status} by ${c.checked_by||c.extractor}${c.reason?' · '+c.reason:''}</div>`).join('') +
+      `<h3>Pipeline decisions</h3>` + ev.decisions.map(d => `<div class="claim"><code>${d.stage}</code> ${d.outcome} — ${d.reason} <span class="ts">(${d.rule_id||''})</span></div>`).join('');
+  });
+  document.getElementById('storybtn').onclick = () => api(`/v1/stories/${a.story_id}`).then(st => {
+    document.getElementById('evidence').innerHTML = `<h3>Story: ${st.title}</h3>` + st.timeline.sort((x,y)=> (x.at||'').localeCompare(y.at||'')).map(t => `<div class="claim"><code>${t.kind}</code> ${fmt(t.at)} — ${t.headline || (t.event_type + ' · ' + t.status)}${t.correction?' <span class="tag correction">correction</span>':''}</div>`).join('');
+  });
+}
+function load() {
+  const params = { market: document.getElementById('market').value, event_type: document.getElementById('etype').value, min_band: document.getElementById('band').value, limit: 200 };
+  api('/v1/alerts', params).then(d => { alerts = d.alerts; render(); }).catch(e => { document.getElementById('feed').innerHTML = `<div class="empty">Could not load (${e.message}). Check the API key.</div>`; });
+}
+function connect() {
+  if (es) es.close();
+  const u = new URL('/v1/stream', location.origin); u.searchParams.set('api_key', keyInput.value); u.searchParams.set('run', run);
+  es = new EventSource(u);
+  const st = document.getElementById('status');
+  es.onopen = () => st.textContent = 'live';
+  es.onerror = () => st.textContent = 'reconnecting…';
+  const onAlert = () => load();
+  es.addEventListener('alert.published', onAlert);
+  es.addEventListener('alert.corrected', onAlert);
+}
+['market','etype','band'].forEach(id => document.getElementById(id).onchange = load);
+document.getElementById('entity').oninput = render;
+document.getElementById('reload').onclick = load;
+load(); connect();
+</script>
+</body>
+</html>

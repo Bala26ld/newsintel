@@ -1,0 +1,13 @@
+# FICTIONAL companies used by the recorded fixtures and the golden set. None of these exist.
+# CIKs are in a reserved high range so they cannot collide with real EDGAR filers.
+entities:
+  - { id: ent_fx_hald, name: "Halvard Dynamics Corporation", ticker: HALD, exchange: NASDAQ, country: US, cik: "0009990001", aliases: ["Halvard Dynamics", "Halvard"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_mrfd, name: "Meridian Foods, Inc.",         ticker: MRFD, exchange: NYSE,   country: US, cik: "0009990002", aliases: ["Meridian Foods"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_orbs, name: "Orbital Semiconductor, Inc.",  ticker: ORBS, exchange: NASDAQ, country: US, cik: "0009990003", aliases: ["Orbital Semiconductor", "Orbital Semi"], fiscal_year_start_month: 11 }
+  - { id: ent_fx_pncb, name: "Pinecrest Bancorp, Inc.",      ticker: PNCB, exchange: NASDAQ, country: US, cik: "0009990004", aliases: ["Pinecrest Bancorp", "Pinecrest Bank"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_tsro, name: "Tessaro Pharmaceuticals, Inc.", ticker: TSRO, exchange: NASDAQ, country: US, cik: "0009990005", aliases: ["Tessaro Pharmaceuticals", "Tessaro"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_nwlg, name: "Northwind Logistics Holdings, Inc.", ticker: NWLG, exchange: NYSE, country: US, cik: "0009990006", aliases: ["Northwind Logistics", "Northwind"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_cstl, name: "Castellan Energy Corporation", ticker: CSTL, exchange: NYSE,   country: US, cik: "0009990007", aliases: ["Castellan Energy", "Castellan"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_vlmt, name: "Velmont Software, Inc.",       ticker: VLMT, exchange: NASDAQ, country: US, cik: "0009990008", aliases: ["Velmont Software", "Velmont"], fiscal_year_start_month: 2 }
+  - { id: ent_fx_brkw, name: "Brookwater Utilities, Inc.",   ticker: BRKW, exchange: NYSE,   country: US, cik: "0009990009", aliases: ["Brookwater Utilities", "Brookwater"], fiscal_year_start_month: 1 }
+  - { id: ent_fx_ashm, name: "Ashmere Medical Devices, Inc.", ticker: ASHM, exchange: NASDAQ, country: US, cik: "0009990010", aliases: ["Ashmere Medical", "Ashmere"], fiscal_year_start_month: 1 }

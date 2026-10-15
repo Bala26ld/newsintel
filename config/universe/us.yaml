@@ -1,0 +1,15 @@
+# Initial US universe for live monitoring: ten large filers chosen for 8-K volume.
+# CIKs are from working knowledge; `newsintel verify-universe` checks each against EDGAR's
+# company lookup before the adapter is enabled live. Swap any name freely.
+verify_before_live: true
+entities:
+  - { id: ent_us_aapl,  name: "Apple Inc.",               ticker: AAPL, exchange: NASDAQ, cik: "0000320193", fiscal_year_start_month: 10 }
+  - { id: ent_us_msft,  name: "Microsoft Corporation",    ticker: MSFT, exchange: NASDAQ, cik: "0000789019", fiscal_year_start_month: 7 }
+  - { id: ent_us_nvda,  name: "NVIDIA Corporation",       ticker: NVDA, exchange: NASDAQ, cik: "0001045810", fiscal_year_start_month: 2 }
+  - { id: ent_us_amzn,  name: "Amazon.com, Inc.",         ticker: AMZN, exchange: NASDAQ, cik: "0001018724", fiscal_year_start_month: 1 }
+  - { id: ent_us_googl, name: "Alphabet Inc.",            ticker: GOOGL, exchange: NASDAQ, cik: "0001652044", fiscal_year_start_month: 1 }
+  - { id: ent_us_meta,  name: "Meta Platforms, Inc.",     ticker: META, exchange: NASDAQ, cik: "0001326801", fiscal_year_start_month: 1 }
+  - { id: ent_us_tsla,  name: "Tesla, Inc.",              ticker: TSLA, exchange: NASDAQ, cik: "0001318605", fiscal_year_start_month: 1 }
+  - { id: ent_us_jpm,   name: "JPMorgan Chase & Co.",     ticker: JPM,  exchange: NYSE,   cik: "0000019617", fiscal_year_start_month: 1 }
+  - { id: ent_us_xom,   name: "Exxon Mobil Corporation",  ticker: XOM,  exchange: NYSE,   cik: "0000034088", fiscal_year_start_month: 1 }
+  - { id: ent_us_jnj,   name: "Johnson & Johnson",        ticker: JNJ,  exchange: NYSE,   cik: "0000200406", fiscal_year_start_month: 1 }

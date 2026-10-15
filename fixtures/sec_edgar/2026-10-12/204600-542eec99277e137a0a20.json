@@ -1,0 +1,29 @@
+{
+ "source_id": "sec_edgar",
+ "url": "https://www.sec.gov/Archives/edgar/data/9990002/000999000226100005/form8-k.htm",
+ "mime": "text/html",
+ "retrieved_at": "2026-10-12T20:46:00Z",
+ "source_published_at": "2026-10-12T20:45:55Z",
+ "headers": {
+  "content-type": "text/html",
+  "x-fixture": "synthetic"
+ },
+ "meta": {
+  "cik": "0009990002",
+  "registrant": "Meridian Foods, Inc.",
+  "accession": "0009990002-26-100005",
+  "form": "8-K",
+  "filing_date": "2026-10-12",
+  "acceptance": "2026-10-12T20:45:55Z",
+  "primary_document": "form8-k.htm",
+  "items": [
+   "5.02"
+  ],
+  "tickers": [
+   "MRFD"
+  ],
+  "synthetic": true,
+  "label": "cfo_change"
+ },
+ "body": "<html><head><title>8-K</title></head><body>\n<div>UNITED STATES SECURITIES AND EXCHANGE COMMISSION</div>\n<div>Washington, D.C. 20549</div>\n<div><b>FORM 8-K</b></div>\n<div>CURRENT REPORT</div>\n<div>Pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n<div>Date of Report (Date of earliest event reported): October 12, 2026</div>\n<div><b>Meridian Foods, Inc.</b></div>\n<div>(Exact name of registrant as specified in its charter)</div>\n<table><tr><td>Delaware</td><td>001-41002</td><td>86-410020</td></tr></table>\n<div>(State or other jurisdiction of incorporation) (Commission File Number) (IRS Employer Identification No.)</div>\n<div><b>Item 5.02 Departure of Directors or Certain Officers; Election of Directors; Appointment of Certain Officers.</b></div>\n<p>On October 12, 2026, Dana R. Whitlock resigned as Chief Financial Officer of Meridian Foods, Inc. effective October 31, 2026. On the same date, the Board of Directors appointed Samuel Ortega as Chief Financial Officer effective November 1, 2026. Mr. Ortega, age 52, previously served as Senior Vice President, Finance.</p>\n<div><b>SIGNATURES</b></div>\n<div>Pursuant to the requirements of the Securities Exchange Act of 1934, the registrant has duly caused this report to be signed on its behalf by the undersigned hereunto duly authorized.</div>\n<div>Meridian Foods, Inc.</div>\n<div>Date: October 12, 2026</div>\n</body></html>"
+}

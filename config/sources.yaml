@@ -1,0 +1,55 @@
+# Source registry. One entry per adapter instance. Access routes must be confirmed against
+# each source's current terms before `enabled: true` in production (see the design doc).
+sources:
+  - id: sec_edgar
+    market: US
+    kind: exchange
+    adapter: newsintel.adapters.edgar:EdgarAdapter
+    enabled: true
+    access_method: public_feed
+    base_url: https://www.sec.gov
+    terms_url: https://www.sec.gov/os/accessing-edgar-data
+    user_agent: "newsintel/0.1 (contact: set NEWSINTEL_CONTACT_EMAIL)"
+    max_requests_per_second: 8        # stays under EDGAR's published fair-access limit (verify)
+    poll_interval_s: 60
+    release_window_interval_s: 30
+    may_store_full_text: true
+    may_redistribute_text: true       # EDGAR filings are public records; verify exhibits licensing per case
+    trust_seed: 1.0
+    allowed_domains: [www.sec.gov, sec.gov]
+    forms: [8-K, 10-Q, 10-K]
+    universe: config/universe/us.yaml
+
+  # Placeholders for Phase 2 adapters. Disabled until their access route and terms are confirmed.
+  - id: lse_rns
+    market: UK
+    kind: exchange
+    adapter: newsintel.adapters.generic_page:PageWatcherAdapter
+    enabled: false
+    access_method: change_detection
+    terms_url: https://www.londonstockexchange.com/
+    may_store_full_text: false
+    may_redistribute_text: false
+    poll_interval_s: 60
+    trust_seed: 1.0
+    allowed_domains: [www.londonstockexchange.com]
+  - id: bse_announcements
+    market: IN
+    kind: exchange
+    adapter: newsintel.adapters.generic_page:PageWatcherAdapter
+    enabled: false
+    access_method: change_detection
+    terms_url: https://www.bseindia.com/
+    may_store_full_text: true
+    may_redistribute_text: false
+    poll_interval_s: 120
+    trust_seed: 1.0
+    allowed_domains: [www.bseindia.com, api.bseindia.com]
+  - id: company_ir_rss
+    market: ALL
+    kind: company_ir
+    adapter: newsintel.adapters.rss:RssAdapter
+    enabled: false
+    access_method: rss
+    poll_interval_s: 300
+    trust_seed: 0.9
