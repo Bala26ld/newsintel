@@ -94,6 +94,13 @@ def create_app(bus: Bus | None = None, on_startup=None, on_shutdown=None) -> Fas
     async def index():
         return FileResponse(STATIC / "feed.html")
 
+    @app.get("/favicon.ico", include_in_schema=False)
+    async def favicon():
+        from fastapi.responses import Response
+
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#2457d6"/><circle cx="16" cy="16" r="6" fill="#fff"/></svg>'
+        return Response(svg, media_type="image/svg+xml")
+
     # ---------- alerts ----------
 
     def _alert_out(a: models.Alert) -> dict:
@@ -109,12 +116,81 @@ def create_app(bus: Bus | None = None, on_startup=None, on_shutdown=None) -> Fas
         event_type: str | None = None,
         min_band: str = "low",
         since: str | None = None,
-        limit: int = Query(50, le=200),
+        status: str | None = None,
+        corrections_only: bool = False,
+        q: str | None = Query(None, description="case-insensitive text match on headline and entity"),
+        sort: str = Query("newest", pattern="^(newest|materiality)$"),
+        limit: int = Query(50, le=500),
     ):
         bands = {"low": 0.0, "medium": 0.35, "high": 0.6}
         with session() as s:
-            rows = repo.list_alerts(s, market=market, entity_id=entity, event_type=event_type, min_materiality=bands.get(min_band, 0.0), since=parse_datetime(since), limit=limit)
+            rows = repo.list_alerts(s, market=market, entity_id=entity, event_type=event_type, min_materiality=bands.get(min_band, 0.0), since=parse_datetime(since), limit=500)
+            if status:
+                rows = [a for a in rows if a.status == status]
+            if corrections_only:
+                rows = [a for a in rows if a.correction_of_alert_id]
+            if q:
+                needle = q.lower()
+                rows = [a for a in rows if needle in a.headline.lower() or needle in (a.body.get("entity", {}).get("name") or "").lower() or needle == (a.body.get("entity", {}).get("ticker") or "").lower()]
+            if sort == "materiality":
+                rows.sort(key=lambda a: (-a.materiality, a.published_at))
+            rows = rows[:limit]
             return {"alerts": [_alert_out(a) for a in rows], "count": len(rows)}
+
+    @app.get("/v1/runs")
+    async def list_runs(_: str = Depends(role)):
+        """Every run id with alerts (live plus replay runs), newest activity first."""
+        from sqlalchemy import func
+
+        with session() as s:
+            q = select(models.Alert.run_id, func.count(models.Alert.id), func.max(models.Alert.published_at)).group_by(models.Alert.run_id)
+            runs = [{"run_id": r, "alerts": n, "last_published_at": clock.iso(t)} for r, n, t in s.execute(q)]
+        runs.sort(key=lambda r: (r["run_id"] != "live", r["last_published_at"] or ""), reverse=False)
+        runs.sort(key=lambda r: r["last_published_at"] or "", reverse=True)
+        return {"runs": runs, "current": current_run_id.get()}
+
+    @app.get("/v1/stats")
+    async def stats(_: str = Depends(role)):
+        """Counts for the current run: alerts by band, corrections, held for review, sources, last alert."""
+        from sqlalchemy import func
+
+        run = current_run_id.get()
+        with session() as s:
+            total = s.scalar(select(func.count(models.Alert.id)).where(models.Alert.run_id == run)) or 0
+            by_band = {"high": 0, "medium": 0, "low": 0}
+            for a in s.scalars(select(models.Alert).where(models.Alert.run_id == run)):
+                by_band[a.body.get("materiality_band", "low")] += 1
+            corrections = s.scalar(select(func.count(models.Alert.id)).where(models.Alert.run_id == run, models.Alert.correction_of_alert_id.is_not(None))) or 0
+            held = s.scalar(select(func.count(models.ReviewItem.id)).where(models.ReviewItem.run_id == run, models.ReviewItem.decided_at.is_(None))) or 0
+            last = s.scalar(select(func.max(models.Alert.published_at)).where(models.Alert.run_id == run))
+            events = s.scalar(select(func.count(models.Event.id)).where(models.Event.run_id == run)) or 0
+            markets = {m for (m,) in s.execute(select(models.Alert.market).where(models.Alert.run_id == run).distinct())}
+        srcs = source_health()
+        return {
+            "run": run,
+            "alerts": total,
+            "by_band": by_band,
+            "corrections": corrections,
+            "held_for_review": held,
+            "events": events,
+            "markets": sorted(markets),
+            "sources_enabled": sum(1 for x in srcs if x["enabled"]),
+            "sources_failing": sum(1 for x in srcs if x["consecutive_failures"] > 0),
+            "last_published_at": clock.iso(last),
+        }
+
+    @app.get("/v1/held")
+    async def held_events(_: str = Depends(role)):
+        """Events the gate did not publish (held, merged, suppressed), with the rule that decided it. Read-only."""
+        run = current_run_id.get()
+        with session() as s:
+            out = []
+            for ev in s.scalars(select(models.Event).where(models.Event.run_id == run).order_by(models.Event.first_detected_at.desc())):
+                gate = [d for d in repo.decisions_for(s, ev.id) if d.stage == "gate"]
+                if not gate or gate[-1].outcome == "publish":
+                    continue
+                out.append({"event_id": ev.id, "event_type": ev.event_type, "market": ev.market, "entity": ev.payload.get("primary_entity"), "status": ev.status, "materiality": ev.materiality, "detected_at": clock.iso(ev.first_detected_at), "outcome": gate[-1].outcome, "rule_id": gate[-1].rule_id, "reason": gate[-1].reason})
+            return {"items": out}
 
     @app.get("/v1/alerts/{alert_id}")
     async def get_alert(alert_id: str, _: str = Depends(role)):

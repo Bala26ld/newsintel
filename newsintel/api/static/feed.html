@@ -3,136 +3,492 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>newsintel feed</title>
+<title>newsintel</title>
 <style>
-  :root { --bg:#f6f7f9; --panel:#fff; --ink:#15181d; --muted:#5f6670; --line:#e1e4e8; --accent:#1f5fbf; --high:#b42318; --medium:#b26a00; --low:#3b6; --tint:#eef3fb; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#0f1115; --panel:#171a20; --ink:#e8eaee; --muted:#9aa2ad; --line:#2a2f38; --accent:#7fb0ff; --high:#ff7b6b; --medium:#ffb84d; --low:#6ccf8a; --tint:#1b2230; } }
-  * { box-sizing: border-box; }
-  body { margin:0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); }
-  header { display:flex; align-items:center; gap:16px; padding:10px 16px; border-bottom:1px solid var(--line); background: var(--panel); }
-  header h1 { font-size:15px; margin:0; letter-spacing:.02em; }
-  header .status { color: var(--muted); font-size:12px; }
-  main { display:grid; grid-template-columns: 220px minmax(320px, 1fr) minmax(360px, 1.2fr); gap:0; height: calc(100vh - 45px); }
-  @media (max-width: 900px) { main { grid-template-columns: 1fr; height:auto; } aside, #detail { border-left:none; } }
-  aside { padding:14px; border-right:1px solid var(--line); background: var(--panel); overflow:auto; }
-  aside label { display:block; font-size:12px; color: var(--muted); margin:10px 0 4px; }
-  aside select, aside input { width:100%; padding:6px; border:1px solid var(--line); border-radius:6px; background: var(--bg); color: var(--ink); }
-  #feed { overflow:auto; }
-  .row { padding:12px 16px; border-bottom:1px solid var(--line); cursor:pointer; }
-  .row:hover, .row.active { background: var(--tint); }
-  .row .meta { font-size:12px; color: var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
-  .row .head { font-weight:600; margin:2px 0 4px; }
-  .band { display:inline-block; font-size:11px; font-weight:600; padding:1px 6px; border-radius:10px; border:1px solid currentColor; }
-  .band.high { color: var(--high); } .band.medium { color: var(--medium); } .band.low { color: var(--low); }
-  .tag { font-size:11px; padding:1px 6px; border-radius:4px; background: var(--tint); color: var(--muted); }
-  .tag.correction { color: var(--high); }
-  #detail { padding:18px 22px; border-left:1px solid var(--line); background: var(--panel); overflow:auto; }
-  #detail h2 { font-size:17px; margin:0 0 6px; }
-  #detail h3 { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color: var(--muted); margin:18px 0 6px; }
-  #detail ul { margin:0; padding-left:18px; }
-  #detail .ts { font-size:12px; color: var(--muted); }
-  #detail a { color: var(--accent); }
-  .claim { font-size:12px; border-left:3px solid var(--line); padding:4px 8px; margin:4px 0; }
-  .claim.unsupported { border-color: var(--high); }
-  .claim code { font-size:11px; background: var(--tint); padding:1px 4px; border-radius:3px; }
-  button { font: inherit; padding:5px 10px; border:1px solid var(--line); border-radius:6px; background: var(--bg); color: var(--ink); cursor:pointer; }
-  .empty { padding:30px; color: var(--muted); text-align:center; }
-  .notice { font-size:12px; color: var(--muted); padding:8px 16px; border-bottom:1px solid var(--line); }
+  :root {
+    --bg:#f4f5f7; --panel:#ffffff; --panel-2:#f8f9fb; --ink:#111318; --ink-2:#4b5563; --muted:#8a919c; --line:#e4e7ec; --line-2:#eef0f3;
+    --accent:#2457d6; --accent-ink:#ffffff; --accent-soft:#e8eefc;
+    --high:#c2410c; --high-soft:#fff1e8; --medium:#a16207; --medium-soft:#fdf6e3; --low:#15803d; --low-soft:#e9f7ee;
+    --danger:#b91c1c; --ok:#15803d; --shadow:0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+    --radius:12px; --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  [data-theme="dark"] {
+    --bg:#0e1116; --panel:#161a21; --panel-2:#1c212a; --ink:#e9ecf1; --ink-2:#b4bcc8; --muted:#7f8794; --line:#262c36; --line-2:#20262f;
+    --accent:#6b9cff; --accent-ink:#0b1220; --accent-soft:#1a2740;
+    --high:#ff8a5b; --high-soft:#2d1a12; --medium:#f3c54b; --medium-soft:#2a230f; --low:#5fd38a; --low-soft:#10261a;
+    --danger:#ff6b6b; --ok:#5fd38a; --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+  * { box-sizing:border-box; }
+  html, body { height:100%; }
+  body { margin:0; font:14px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif; background:var(--bg); color:var(--ink); -webkit-font-smoothing:antialiased; }
+  button, input, select { font:inherit; color:inherit; }
+  button { cursor:pointer; }
+  a { color:var(--accent); text-decoration:none; } a:hover { text-decoration:underline; }
+  code { font-family:var(--mono); font-size:12px; }
+
+  /* ---------- top bar ---------- */
+  .top { position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:14px; padding:10px 18px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .brand { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; font-size:15px; }
+  .brand .dot { width:10px; height:10px; border-radius:50%; background:var(--muted); box-shadow:0 0 0 3px color-mix(in srgb, var(--muted) 25%, transparent); }
+  .brand .dot.live { background:var(--ok); box-shadow:0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow:0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent);} 50% { box-shadow:0 0 0 6px color-mix(in srgb, var(--ok) 10%, transparent);} }
+  .top .status { color:var(--muted); font-size:12.5px; }
+  .search { flex:1; max-width:520px; position:relative; }
+  .search input { width:100%; padding:8px 12px 8px 34px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2); outline:none; }
+  .search input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft); }
+  .search .ico { position:absolute; left:10px; top:8px; color:var(--muted); font-size:13px; }
+  .search kbd { position:absolute; right:10px; top:8px; font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:5px; padding:0 5px; background:var(--panel); }
+  .spacer { flex:1; }
+  .seg { display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:var(--panel-2); }
+  .seg button { border:0; background:transparent; padding:6px 11px; color:var(--ink-2); font-size:12.5px; }
+  .seg button.on { background:var(--panel); color:var(--ink); font-weight:600; box-shadow:inset 0 0 0 1px var(--line); }
+  .btn { border:1px solid var(--line); background:var(--panel); border-radius:9px; padding:7px 12px; font-size:13px; color:var(--ink); }
+  .btn:hover { background:var(--panel-2); }
+  .btn.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .btn.small { padding:4px 9px; font-size:12px; border-radius:7px; }
+  .btn.danger { color:var(--danger); }
+  .icon-btn { border:1px solid var(--line); background:var(--panel); border-radius:9px; width:34px; height:34px; display:grid; place-items:center; color:var(--ink-2); }
+  select.sel { border:1px solid var(--line); background:var(--panel); border-radius:9px; padding:7px 10px; font-size:13px; }
+  .notice { font-size:12.5px; color:var(--ink-2); padding:7px 18px; background:var(--panel-2); border-bottom:1px solid var(--line); display:flex; gap:14px; align-items:center; }
+  .notice .pill { background:var(--accent-soft); color:var(--accent); padding:1px 8px; border-radius:20px; font-weight:600; font-size:12px; }
+
+  /* ---------- layout ---------- */
+  .wrap { display:grid; grid-template-columns:260px minmax(380px, 1fr) minmax(420px, 1.15fr); gap:16px; padding:16px 18px; height:calc(100vh - 86px); }
+  @media (max-width:1100px) { .wrap { grid-template-columns:240px 1fr; } #detail { grid-column:1 / -1; } }
+  @media (max-width:760px) { .wrap { display:flex; flex-direction:column; height:auto; } .top .search { display:none; } }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; flex-direction:column; min-height:0; }
+  .panel-h { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid var(--line-2); font-weight:600; }
+  .panel-h .count { color:var(--muted); font-weight:500; font-size:12.5px; }
+  .panel-b { overflow:auto; min-height:0; flex:1; }
+
+  /* ---------- stats ---------- */
+  .stats { display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; padding:12px 14px; border-bottom:1px solid var(--line-2); }
+  .stat { background:var(--panel-2); border-radius:10px; padding:9px 11px; }
+  .stat .v { font-size:20px; font-weight:700; letter-spacing:-.02em; line-height:1.1; }
+  .stat .l { font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .stat.high .v { color:var(--high); } .stat.warn .v { color:var(--medium); }
+
+  /* ---------- filters ---------- */
+  .filters { padding:12px 14px; display:flex; flex-direction:column; gap:12px; }
+  .f-group label { display:block; font-size:11.5px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+  .chip { border:1px solid var(--line); background:var(--panel); border-radius:20px; padding:4px 10px; font-size:12.5px; color:var(--ink-2); }
+  .chip.on { background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600; }
+  .chip.high.on { background:var(--high-soft); color:var(--high); border-color:var(--high); }
+  .chip.medium.on { background:var(--medium-soft); color:var(--medium); border-color:var(--medium); }
+  .chip.low.on { background:var(--low-soft); color:var(--low); border-color:var(--low); }
+  .toggle { display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--ink-2); }
+  .toggle input { accent-color:var(--accent); width:16px; height:16px; }
+  .wl { display:flex; flex-wrap:wrap; gap:6px; }
+  .wl .chip { display:inline-flex; gap:6px; align-items:center; }
+  .wl .chip b { font-weight:600; }
+  .wl .x { opacity:.6; cursor:pointer; }
+  .f-foot { display:flex; gap:8px; }
+
+  /* ---------- feed ---------- */
+  .toolbar { display:flex; gap:8px; align-items:center; padding:8px 14px; border-bottom:1px solid var(--line-2); font-size:12.5px; color:var(--muted); }
+  .toolbar .spacer { flex:1; }
+  .row { display:grid; grid-template-columns:6px 1fr; gap:12px; padding:12px 14px 12px 10px; border-bottom:1px solid var(--line-2); cursor:pointer; transition:background .12s; }
+  .row:hover { background:var(--panel-2); }
+  .row.active { background:var(--accent-soft); }
+  .row .bar { border-radius:3px; background:var(--line); }
+  .row.high .bar { background:var(--high); } .row.medium .bar { background:var(--medium); } .row.low .bar { background:var(--low); }
+  .row .meta { display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; font-size:12px; color:var(--muted); }
+  .row .head { font-weight:600; margin:3px 0 4px; line-height:1.35; font-size:14px; }
+  .row .sub { font-size:12.5px; color:var(--ink-2); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .row.fresh { animation:flash 2.4s ease-out; }
+  @keyframes flash { 0% { background:var(--low-soft);} 100% { background:transparent;} }
+  .tag { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:1px 7px; border-radius:20px; background:var(--panel-2); color:var(--ink-2); border:1px solid var(--line); }
+  .tag.high { background:var(--high-soft); color:var(--high); border-color:transparent; }
+  .tag.medium { background:var(--medium-soft); color:var(--medium); border-color:transparent; }
+  .tag.low { background:var(--low-soft); color:var(--low); border-color:transparent; }
+  .tag.corr { background:var(--high-soft); color:var(--high); border-color:transparent; }
+  .tag.ok { background:var(--low-soft); color:var(--low); border-color:transparent; }
+  .tag.ticker { font-family:var(--mono); letter-spacing:.02em; }
+  .empty { padding:40px 20px; color:var(--muted); text-align:center; }
+  .empty h4 { margin:0 0 6px; color:var(--ink); }
+
+  /* ---------- detail ---------- */
+  #detail .panel-b { padding:0; }
+  .d-head { padding:18px 20px 12px; border-bottom:1px solid var(--line-2); }
+  .d-head h2 { font-size:18px; line-height:1.3; margin:8px 0 8px; letter-spacing:-.01em; }
+  .d-head .meta { display:flex; flex-wrap:wrap; gap:6px 12px; font-size:12.5px; color:var(--muted); align-items:center; }
+  .d-actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
+  .tabs { display:flex; gap:2px; padding:0 14px; border-bottom:1px solid var(--line-2); }
+  .tabs button { border:0; background:transparent; padding:10px 10px; color:var(--muted); border-bottom:2px solid transparent; font-size:13px; }
+  .tabs button.on { color:var(--ink); border-bottom-color:var(--accent); font-weight:600; }
+  .d-body { padding:16px 20px; }
+  .sec { margin-bottom:18px; }
+  .sec h3 { margin:0 0 8px; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; }
+  .sec ul { margin:0; padding-left:18px; } .sec li { margin:3px 0; }
+  .sec .cite { color:var(--muted); font-size:11px; font-family:var(--mono); margin-left:6px; cursor:pointer; }
+  .box { background:var(--panel-2); border:1px solid var(--line-2); border-radius:10px; padding:10px 12px; }
+  .ts-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+  .ts-grid .k { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .ts-grid .v { font-size:13px; font-weight:600; }
+  .ts-grid .d { font-size:11.5px; color:var(--muted); }
+  .bars { display:grid; gap:6px; }
+  .bar-row { display:grid; grid-template-columns:140px 1fr 44px; align-items:center; gap:10px; font-size:12.5px; }
+  .bar-row .track { height:8px; background:var(--line-2); border-radius:4px; overflow:hidden; }
+  .bar-row .fill { height:100%; background:var(--accent); border-radius:4px; }
+  .bar-row .n { text-align:right; color:var(--ink-2); font-family:var(--mono); font-size:12px; }
+  .claim { font-size:12.5px; border-left:3px solid var(--line); padding:6px 10px; margin:6px 0; background:var(--panel-2); border-radius:0 8px 8px 0; }
+  .claim.unsupported { border-color:var(--danger); }
+  .claim.supported { border-color:var(--ok); }
+  .claim .q { color:var(--ink-2); font-style:italic; }
+  .claim.hl { outline:2px solid var(--accent); }
+  .dec { display:grid; grid-template-columns:90px 110px 1fr; gap:10px; font-size:12.5px; padding:6px 0; border-bottom:1px solid var(--line-2); }
+  .dec .st { font-family:var(--mono); color:var(--muted); font-size:12px; }
+  .dec .o { font-weight:600; }
+  .dec .o.publish, .dec .o.ok, .dec .o.verified_official, .dec .o.published { color:var(--ok); }
+  .dec .o.hold_review, .dec .o.hold_developing, .dec .o.rejected { color:var(--high); }
+  .tl { position:relative; padding-left:18px; }
+  .tl::before { content:""; position:absolute; left:5px; top:4px; bottom:4px; width:2px; background:var(--line); }
+  .tl .it { position:relative; padding:4px 0 10px; font-size:13px; }
+  .tl .it::before { content:""; position:absolute; left:-17px; top:9px; width:8px; height:8px; border-radius:50%; background:var(--muted); border:2px solid var(--panel); }
+  .tl .it.alert::before { background:var(--accent); }
+  .tl .it .t { color:var(--muted); font-size:11.5px; }
+  .muted { color:var(--muted); }
+  .src-link { display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid var(--line-2); border-radius:8px; background:var(--panel-2); margin:6px 0; font-size:12.5px; }
+  .src-link code { color:var(--muted); }
+
+  /* ---------- review / held ---------- */
+  .rv { padding:12px 14px; border-bottom:1px solid var(--line-2); }
+  .rv .r { font-size:12.5px; color:var(--high); margin:4px 0 8px; }
+  .rv textarea { width:100%; border:1px solid var(--line); border-radius:8px; padding:6px 8px; background:var(--panel-2); font:inherit; resize:vertical; min-height:36px; }
+
+  /* ---------- toast ---------- */
+  #toasts { position:fixed; right:18px; bottom:18px; display:grid; gap:8px; z-index:50; }
+  .toast { background:var(--ink); color:var(--bg); padding:10px 14px; border-radius:10px; box-shadow:var(--shadow); font-size:13px; max-width:360px; cursor:pointer; animation:up .2s ease-out; }
+  @keyframes up { from { transform:translateY(8px); opacity:0;} to { transform:none; opacity:1;} }
+  .kbd { font-family:var(--mono); font-size:11px; border:1px solid var(--line); border-radius:4px; padding:0 4px; color:var(--muted); }
 </style>
 </head>
 <body>
-<header>
-  <h1>newsintel · verified feed</h1>
+<header class="top">
+  <div class="brand"><span class="dot" id="livedot"></span>newsintel</div>
   <span class="status" id="status">connecting…</span>
-  <span class="status" id="runlabel"></span>
+  <div class="search"><span class="ico">&#128269;</span><input id="q" placeholder="Search headline, company or ticker"><kbd>/</kbd></div>
+  <div class="spacer"></div>
+  <select class="sel" id="run" title="Which pipeline run to view"></select>
+  <div class="seg" id="range">
+    <button data-v="24h">24h</button><button data-v="7d">7d</button><button data-v="30d">30d</button><button data-v="all" class="on">All</button>
+  </div>
+  <button class="btn" id="theme" title="Toggle light/dark">Theme</button>
+  <button class="btn" id="keybtn" title="Set API key">API key</button>
 </header>
-<div class="notice">Alerts report what official sources state. Nothing here is a recommendation to buy or sell anything.</div>
-<main>
-  <aside>
-    <label>API key</label><input id="key" placeholder="reader key">
-    <label>Market</label>
-    <select id="market"><option value="">All</option><option>US</option><option>UK</option><option>IN</option></select>
-    <label>Event type</label>
-    <select id="etype"><option value="">All</option><option value="contract_award">Contract award</option><option value="acquisition">Acquisition</option><option value="earnings">Earnings</option><option value="management_change">Management change</option><option value="regulatory_action">Regulatory action</option><option value="macro_release">Macro release</option></select>
-    <label>Minimum band</label>
-    <select id="band"><option value="low">Low and above</option><option value="medium">Medium and above</option><option value="high">High only</option></select>
-    <label>Entity filter (ticker or name)</label><input id="entity" placeholder="e.g. HALD">
-    <div style="margin-top:12px"><button id="reload">Reload</button></div>
+<div class="notice"><span class="pill">Verified only</span><span>Alerts report what official sources state, with a link to the source. Nothing here is a recommendation to buy or sell anything.</span><span class="spacer"></span><span id="runnote"></span></div>
+
+<main class="wrap">
+  <aside class="panel">
+    <div class="stats" id="stats"></div>
+    <div class="panel-b">
+      <div class="filters">
+        <div class="f-group"><label>Band</label><div class="chips" id="bands">
+          <button class="chip high on" data-v="high">High</button><button class="chip medium on" data-v="medium">Medium</button><button class="chip low on" data-v="low">Low</button>
+        </div></div>
+        <div class="f-group"><label>Market</label><div class="chips" id="markets">
+          <button class="chip on" data-v="">All</button><button class="chip" data-v="US">US</button><button class="chip" data-v="UK">UK</button><button class="chip" data-v="IN">India</button>
+        </div></div>
+        <div class="f-group"><label>Event type</label><div class="chips" id="types">
+          <button class="chip on" data-v="">All</button>
+          <button class="chip" data-v="contract_award">Contracts</button><button class="chip" data-v="acquisition">M&amp;A</button><button class="chip" data-v="earnings">Earnings</button>
+          <button class="chip" data-v="management_change">Management</button><button class="chip" data-v="regulatory_action">Regulatory</button><button class="chip" data-v="macro_release">Macro</button>
+        </div></div>
+        <div class="f-group"><label>Show</label>
+          <div class="toggle"><span>Corrections only</span><input type="checkbox" id="corr"></div>
+          <div class="toggle" style="margin-top:6px"><span>My watchlist only</span><input type="checkbox" id="wlonly"></div>
+          <div class="toggle" style="margin-top:6px"><span>Desktop notifications</span><input type="checkbox" id="notif"></div>
+        </div>
+        <div class="f-group"><label>Watchlist <span class="muted" style="text-transform:none;font-weight:400">(click a ticker in the feed to add)</span></label><div class="wl" id="wl"></div></div>
+        <div class="f-foot"><button class="btn small" id="reset">Reset filters</button><button class="btn small" id="csv">Export CSV</button></div>
+        <div class="muted" style="font-size:11.5px">Keys: <span class="kbd">j</span>/<span class="kbd">k</span> move · <span class="kbd">Enter</span> open · <span class="kbd">/</span> search · <span class="kbd">e</span> evidence</div>
+      </div>
+    </div>
   </aside>
-  <section id="feed"><div class="empty">Loading…</div></section>
-  <section id="detail"><div class="empty">Select an alert to see confirmed facts, what is new, why it may matter, what is not established, and the evidence trail.</div></section>
+
+  <section class="panel" id="feedpanel">
+    <div class="panel-h">Alerts <span class="count" id="count"></span><span class="spacer"></span>
+      <select class="sel" id="sort" style="padding:4px 8px;font-size:12px"><option value="newest">Newest first</option><option value="materiality">Highest materiality</option></select>
+    </div>
+    <div class="tabs" id="feedtabs"><button class="on" data-v="alerts">Published</button><button data-v="held">Held / merged</button><button data-v="review" id="reviewtab" hidden>Review queue</button></div>
+    <div class="panel-b" id="feed"><div class="empty">Loading…</div></div>
+  </section>
+
+  <section class="panel" id="detail">
+    <div class="panel-b"><div class="empty"><h4>Pick an alert</h4>Confirmed facts, what is new, why it may matter, what the source does not establish, and the evidence trail.</div></div>
+  </section>
 </main>
+<div id="toasts"></div>
+
 <script>
+/* ---------- state ---------- */
 const qs = new URLSearchParams(location.search);
-const run = qs.get('run') || 'live';
-document.getElementById('runlabel').textContent = run === 'live' ? '' : 'viewing replay run: ' + run;
-const keyInput = document.getElementById('key');
-keyInput.value = qs.get('key') || localStorage.getItem('newsintel_key') || 'dev-reader-key';
-keyInput.addEventListener('change', () => { localStorage.setItem('newsintel_key', keyInput.value); load(); connect(); });
-const api = (path, params={}) => {
-  const u = new URL(path, location.origin);
-  Object.entries(params).forEach(([k,v]) => v && u.searchParams.set(k, v));
-  u.searchParams.set('run', run);
-  return fetch(u, { headers: { 'X-API-Key': keyInput.value } }).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+const S = {
+  run: qs.get('run') || null, key: qs.get('key') || lsGet('key') || 'dev-reader-key', role: 'reader',
+  bands: new Set(['high','medium','low']), market: '', type: '', corr: false, wlonly: false, range: 'all', sort: 'newest', q: '',
+  view: 'alerts', alerts: [], held: [], review: [], active: null, wl: new Set(JSON.parse(lsGet('wl') || '[]')), es: null, seen: new Set(),
 };
-let alerts = [], active = null, es = null;
-const fmt = iso => iso ? new Date(iso).toLocaleString() : '—';
+function lsGet(k) { try { return localStorage.getItem('ni_' + k); } catch { return null; } }
+function lsSet(k, v) { try { localStorage.setItem('ni_' + k, v); } catch {} }
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = iso => iso ? new Date(iso).toLocaleString(undefined, {dateStyle:'medium', timeStyle:'short'}) : '—';
+function ago(iso) { if (!iso) return '—'; const s = (Date.now() - new Date(iso)) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s/60) + 'm ago'; if (s < 86400) return Math.floor(s/3600) + 'h ago'; if (s < 86400*30) return Math.floor(s/86400) + 'd ago'; return new Date(iso).toLocaleDateString(); }
+const TYPE = { contract_award:'Contract', acquisition:'M&A', earnings:'Earnings', management_change:'Management', regulatory_action:'Regulatory', macro_release:'Macro' };
+const STATUS = { verified_official:'Verified · official source', corrected:'Corrected', corroborated_report:'Corroborated report', developing:'Developing', duplicate:'Duplicate', withdrawn:'Withdrawn' };
+
+/* ---------- api ---------- */
+async function api(path, params = {}, opts = {}) {
+  const u = new URL(path, location.origin);
+  Object.entries(params).forEach(([k, v]) => (v !== '' && v != null && v !== false) && u.searchParams.set(k, v));
+  if (S.run) u.searchParams.set('run', S.run);
+  const r = await fetch(u, { ...opts, headers: { 'X-API-Key': S.key, 'Content-Type': 'application/json', ...(opts.headers || {}) } });
+  if (r.status === 401) throw new Error('Invalid API key');
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+function toast(msg, onclick) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.onclick = () => { onclick && onclick(); t.remove(); }; $('#toasts').appendChild(t); setTimeout(() => t.remove(), 6000); }
+
+/* ---------- boot ---------- */
+async function boot() {
+  applyTheme(lsGet('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  // Which run? Prefer the URL, then live if it has alerts, else the most recent replay run.
+  let runs = [];
+  try { runs = (await api('/v1/runs')).runs; } catch (e) { return fail(e); }
+  const sel = $('#run'); sel.innerHTML = '';
+  const opts = [{ run_id: 'live', alerts: 0 }, ...runs.filter(r => r.run_id !== 'live')];
+  const live = runs.find(r => r.run_id === 'live'); if (live) opts[0] = live;
+  opts.forEach(r => { const o = document.createElement('option'); o.value = r.run_id; o.textContent = (r.run_id === 'live' ? 'Live' : 'Replay: ' + r.run_id) + ` (${r.alerts})`; sel.appendChild(o); });
+  if (!S.run) S.run = (live && live.alerts) ? 'live' : (opts.find(r => r.alerts)?.run_id || 'live');
+  sel.value = S.run;
+  $('#runnote').textContent = S.run === 'live' ? '' : `Viewing replay run "${S.run}" — switch to Live at the top right once sources are polling.`;
+  try { S.role = (await fetch('/v1/review?run=' + S.run, { headers: { 'X-API-Key': S.key } })).ok ? 'reviewer' : 'reader'; } catch {}
+  $('#reviewtab').hidden = S.role !== 'reviewer';
+  renderWl();
+  await Promise.all([loadStats(), load()]);
+  connect();
+}
+function fail(e) { $('#feed').innerHTML = `<div class="empty"><h4>Could not load</h4>${esc(e.message)}. Check the API key (⚿ at the top right).</div>`; $('#status').textContent = 'offline'; }
+
+/* ---------- data ---------- */
+function sinceFor() { const h = { '24h': 24, '7d': 168, '30d': 720 }[S.range]; return h ? new Date(Date.now() - h * 3600e3).toISOString() : null; }
+async function loadStats() {
+  try {
+    const s = await api('/v1/stats');
+    $('#stats').innerHTML = `
+      <div class="stat"><div class="v">${s.alerts}</div><div class="l">alerts published</div></div>
+      <div class="stat high"><div class="v">${s.by_band.high}</div><div class="l">high materiality</div></div>
+      <div class="stat warn"><div class="v">${s.held_for_review}</div><div class="l">awaiting review</div></div>
+      <div class="stat"><div class="v">${s.corrections}</div><div class="l">corrections issued</div></div>
+      <div class="stat"><div class="v">${s.sources_enabled}</div><div class="l">sources enabled${s.sources_failing ? ' · <span style="color:var(--danger)">' + s.sources_failing + ' failing</span>' : ''}</div></div>
+      <div class="stat"><div class="v" style="font-size:13px;padding-top:4px">${ago(s.last_published_at)}</div><div class="l">last alert</div></div>`;
+  } catch (e) { $('#stats').innerHTML = ''; }
+}
+async function load() {
+  const minBand = S.bands.has('low') ? 'low' : S.bands.has('medium') ? 'medium' : 'high';
+  try {
+    if (S.view === 'alerts') {
+      const d = await api('/v1/alerts', { market: S.market, event_type: S.type, min_band: minBand, since: sinceFor(), corrections_only: S.corr, q: S.q, sort: S.sort, limit: 500 });
+      S.alerts = d.alerts;
+    } else if (S.view === 'held') {
+      S.held = (await api('/v1/held')).items;
+    } else {
+      S.review = (await api('/v1/review')).items;
+    }
+    render();
+  } catch (e) { fail(e); }
+}
+function visibleAlerts() {
+  return S.alerts.filter(a => S.bands.has(a.materiality_band)).filter(a => !S.wlonly || S.wl.has(a.entity.ticker || a.entity.id));
+}
+
+/* ---------- render: feed ---------- */
 function render() {
-  const feed = document.getElementById('feed');
-  const ent = document.getElementById('entity').value.trim().toLowerCase();
-  const rows = alerts.filter(a => !ent || (a.entity.name||'').toLowerCase().includes(ent) || (a.entity.ticker||'').toLowerCase() === ent);
-  if (!rows.length) { feed.innerHTML = '<div class="empty">No alerts match.</div>'; return; }
+  const feed = $('#feed');
+  if (S.view === 'held') return renderHeld();
+  if (S.view === 'review') return renderReview();
+  const rows = visibleAlerts();
+  $('#count').textContent = rows.length ? `${rows.length} shown` : '';
+  if (!rows.length) { feed.innerHTML = `<div class="empty"><h4>No alerts match</h4>${S.alerts.length ? 'Loosen the band, market or watchlist filters.' : (S.run === 'live' ? 'Nothing has been published live yet. Pick a replay run at the top right, or start polling with <code>newsintel serve --with-pipeline --poll</code>.' : 'This run has no alerts.')}</div>`; return; }
   feed.innerHTML = rows.map(a => `
-    <div class="row ${active===a.row_id?'active':''}" data-id="${a.row_id}">
-      <div class="meta"><span class="band ${a.materiality_band}">${a.materiality_band}</span><span>${a.market}</span><span>${a.event_type.replace('_',' ')}</span><span>${a.entity.ticker||''}</span><span>${fmt(a.timestamps.published)}</span>${a.correction_of?'<span class="tag correction">correction v'+a.version+'</span>':''}${a.label?'<span class="tag">'+a.label+'</span>':''}</div>
-      <div class="head">${a.headline}</div>
-      <div class="meta"><span>${a.status.replace('_',' ')}</span><span>source ${fmt(a.timestamps.source)} · detected ${fmt(a.timestamps.detected)}</span></div>
+    <div class="row ${a.materiality_band} ${S.active === a.row_id ? 'active' : ''} ${S.seen.has(a.row_id) ? '' : ''}" data-id="${a.row_id}" tabindex="0">
+      <div class="bar"></div>
+      <div>
+        <div class="meta">
+          <span class="tag ${a.materiality_band}">${a.materiality_band}</span>
+          <span class="tag ticker" data-t="${esc(a.entity.ticker || a.entity.id)}" title="Add to watchlist">${esc(a.entity.ticker || '—')}</span>
+          <span>${a.market}</span><span>·</span><span>${TYPE[a.event_type] || a.event_type}</span><span>·</span><span title="${fmt(a.timestamps.published)}">${ago(a.timestamps.published)}</span>
+          ${a.correction_of ? `<span class="tag corr">Correction v${a.version}</span>` : ''}${a.label ? `<span class="tag">${esc(a.label)}</span>` : ''}
+        </div>
+        <div class="head">${esc(a.headline)}</div>
+        <div class="sub">${esc(a.confirmed_facts.slice(0, 2).map(s => s.text).join(' '))}</div>
+      </div>
     </div>`).join('');
-  feed.querySelectorAll('.row').forEach(el => el.onclick = () => show(el.dataset.id));
+  feed.querySelectorAll('.row').forEach(el => { el.onclick = () => show(el.dataset.id); el.onkeydown = e => { if (e.key === 'Enter') show(el.dataset.id); }; });
+  feed.querySelectorAll('.tag.ticker').forEach(el => el.onclick = e => { e.stopPropagation(); toggleWl(el.dataset.t); });
 }
-function show(rowId) {
-  active = rowId; render();
-  const a = alerts.find(x => x.row_id === rowId); if (!a) return;
-  const li = arr => arr.map(s => `<li>${s.text || s}</li>`).join('');
-  document.getElementById('detail').innerHTML = `
-    <div class="ts">${a.market} · ${a.event_type.replace('_',' ')} · <span class="band ${a.materiality_band}">${a.materiality_band}</span> · ${a.status.replace('_',' ')} · v${a.version}${a.correction_of?' (corrects '+a.correction_of+')':''}</div>
-    <h2>${a.headline}</h2>
-    <div class="ts">Source published ${fmt(a.timestamps.source)} · detected ${fmt(a.timestamps.detected)} · published ${fmt(a.timestamps.published)}</div>
-    <h3>Confirmed facts</h3><ul>${li(a.confirmed_facts)}</ul>
-    <h3>What is new</h3><ul>${a.what_is_new ? li([a.what_is_new]) : '<li>—</li>'}</ul>
-    <h3>Why it may matter</h3><ul>${a.why_it_may_matter.length ? li(a.why_it_may_matter) : '<li>—</li>'}</ul>
-    <h3>Not established by the source</h3><ul>${li(a.not_established)}</ul>
-    <h3>Evidence</h3><ul>${a.evidence.map(e => `<li><a href="${e.url}" target="_blank" rel="noopener">${e.label}</a> · ${e.source_id} · ${fmt(e.published_at)} · <code>${e.hash.slice(0,19)}…</code></li>`).join('')}</ul>
-    <p><button id="evbtn">Show claim spans and decisions</button> <button id="storybtn">Story timeline</button></p>
-    <div id="evidence"></div>`;
-  document.getElementById('evbtn').onclick = () => api(`/v1/events/${a.event_id}/evidence`).then(ev => {
-    document.getElementById('evidence').innerHTML = `<h3>Claims (${ev.claims.length})</h3>` +
-      ev.claims.map(c => `<div class="claim ${c.check_status}"><code>${c.field}</code> = ${JSON.stringify(c.value)}${c.unit?' '+c.unit:''} · <em>“${c.span_text}”</em> [${c.span[0]}–${c.span[1]}] · ${c.check_status} by ${c.checked_by||c.extractor}${c.reason?' · '+c.reason:''}</div>`).join('') +
-      `<h3>Pipeline decisions</h3>` + ev.decisions.map(d => `<div class="claim"><code>${d.stage}</code> ${d.outcome} — ${d.reason} <span class="ts">(${d.rule_id||''})</span></div>`).join('');
+function renderHeld() {
+  const rows = S.held; $('#count').textContent = rows.length ? `${rows.length} items` : '';
+  if (!rows.length) { $('#feed').innerHTML = '<div class="empty"><h4>Nothing held</h4>Every event in this run was published.</div>'; return; }
+  $('#feed').innerHTML = rows.map(h => `
+    <div class="row ${h.materiality >= .6 ? 'high' : h.materiality >= .35 ? 'medium' : 'low'}" data-ev="${h.event_id}">
+      <div class="bar"></div><div>
+        <div class="meta"><span class="tag">${esc(h.outcome.replace('_', ' '))}</span><span class="tag ticker">${esc(h.entity?.ticker || '—')}</span><span>${h.market}</span><span>·</span><span>${TYPE[h.event_type] || h.event_type}</span><span>·</span><span>${ago(h.detected_at)}</span><span class="tag">rule ${esc(h.rule_id || '')}</span></div>
+        <div class="head">${esc(h.entity?.name || 'Unknown')}: ${TYPE[h.event_type] || h.event_type}</div>
+        <div class="sub">${esc(h.reason)}</div>
+      </div></div>`).join('');
+  $('#feed').querySelectorAll('.row').forEach(el => el.onclick = () => showEvidenceOnly(el.dataset.ev));
+}
+function renderReview() {
+  const rows = S.review; $('#count').textContent = rows.length ? `${rows.length} waiting` : '';
+  if (!rows.length) { $('#feed').innerHTML = '<div class="empty"><h4>Queue is empty</h4>Nothing is waiting for an editorial decision.</div>'; return; }
+  $('#feed').innerHTML = rows.map(it => `
+    <div class="rv" data-id="${it.review_id}">
+      <div class="meta" style="display:flex;gap:8px;font-size:12px;color:var(--muted)"><span class="tag ticker">${esc(it.event?.primary_entity?.ticker || '—')}</span><span>${TYPE[it.event?.event_type] || ''}</span><span>·</span><span>${ago(it.created_at)}</span></div>
+      <div class="head" style="font-weight:600;margin:4px 0">${esc(it.event?.primary_entity?.name || '')}: ${esc((it.event?.fields?.description || '').slice(0, 160) || TYPE[it.event?.event_type] || '')}</div>
+      <div class="r">Held: ${esc(it.reason)}</div>
+      <div style="font-size:12px;color:var(--ink-2);margin-bottom:8px">${it.claims.map(c => `<code>${esc(c.field)}</code> = ${esc(JSON.stringify(c.value))} <span class="tag ${c.check_status === 'supported' ? 'ok' : 'corr'}">${c.check_status}</span>`).join('<br>')}</div>
+      <textarea placeholder="Note (optional)"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn small primary" data-d="approve">Approve and publish</button><button class="btn small danger" data-d="reject">Reject</button><button class="btn small" data-d="evidence">Evidence</button></div>
+    </div>`).join('');
+  $('#feed').querySelectorAll('.rv').forEach(el => {
+    const id = el.dataset.id, it = rows.find(r => r.review_id === id);
+    el.querySelectorAll('button').forEach(b => b.onclick = async () => {
+      if (b.dataset.d === 'evidence') return showEvidenceOnly(it.event_id);
+      try {
+        const r = await api(`/v1/review/${id}/decision`, {}, { method: 'POST', body: JSON.stringify({ decision: b.dataset.d, note: el.querySelector('textarea').value || null }) });
+        toast(r.status === 'published' ? 'Published: ' + r.alert.headline : 'Decision recorded: ' + r.status);
+        await Promise.all([load(), loadStats()]);
+      } catch (e) { toast('Failed: ' + e.message); }
+    });
   });
-  document.getElementById('storybtn').onclick = () => api(`/v1/stories/${a.story_id}`).then(st => {
-    document.getElementById('evidence').innerHTML = `<h3>Story: ${st.title}</h3>` + st.timeline.sort((x,y)=> (x.at||'').localeCompare(y.at||'')).map(t => `<div class="claim"><code>${t.kind}</code> ${fmt(t.at)} — ${t.headline || (t.event_type + ' · ' + t.status)}${t.correction?' <span class="tag correction">correction</span>':''}</div>`).join('');
-  });
 }
-function load() {
-  const params = { market: document.getElementById('market').value, event_type: document.getElementById('etype').value, min_band: document.getElementById('band').value, limit: 200 };
-  api('/v1/alerts', params).then(d => { alerts = d.alerts; render(); }).catch(e => { document.getElementById('feed').innerHTML = `<div class="empty">Could not load (${e.message}). Check the API key.</div>`; });
+
+/* ---------- render: detail ---------- */
+async function show(rowId) {
+  S.active = rowId; S.seen.add(rowId); render();
+  const a = S.alerts.find(x => x.row_id === rowId); if (!a) return;
+  const cite = s => `<li>${esc(s.text)}<span class="cite" title="Claims this sentence rests on" data-c="${s.claim_ids.join(',')}">[${s.claim_ids.length}]</span></li>`;
+  const parts = a.materiality_parts || {};
+  const d = $('#detail .panel-b');
+  d.innerHTML = `
+    <div class="d-head">
+      <div class="meta"><span class="tag ${a.materiality_band}">${a.materiality_band} materiality</span><span class="tag ${a.status === 'corrected' ? 'corr' : 'ok'}">${STATUS[a.status] || a.status}</span><span>${a.market}</span><span>·</span><span>${TYPE[a.event_type] || a.event_type}</span><span>·</span><span>v${a.version}</span>${a.label ? `<span class="tag">${esc(a.label)}</span>` : ''}</div>
+      <h2>${esc(a.headline)}</h2>
+      <div class="meta"><b style="color:var(--ink)">${esc(a.entity.name)}</b>${a.entity.ticker ? ` <span class="tag ticker" id="wlbtn" data-t="${esc(a.entity.ticker)}">${esc(a.entity.ticker)} ${S.wl.has(a.entity.ticker) ? '★' : '☆'}</span>` : ''}${a.entity.exchange ? `<span>${a.entity.exchange}</span>` : ''}</div>
+      <div class="d-actions">
+        ${a.evidence.map(e => `<a class="btn small" href="${esc(e.url)}" target="_blank" rel="noopener">Open source ↗</a>`).join('')}
+        <button class="btn small" id="copylink">Copy link</button>
+        ${a.correction_of ? `<button class="btn small" id="showprev">Show previous version</button>` : ''}
+      </div>
+    </div>
+    <div class="tabs" id="dtabs"><button class="on" data-v="summary">Summary</button><button data-v="evidence">Evidence &amp; claims</button><button data-v="decisions">Pipeline decisions</button><button data-v="story">Story timeline</button></div>
+    <div class="d-body" id="dbody"></div>`;
+  const body = $('#dbody');
+  const summary = () => body.innerHTML = `
+    <div class="sec"><div class="box ts-grid">
+      <div><div class="k">Source published</div><div class="v">${fmt(a.timestamps.source)}</div></div>
+      <div><div class="k">Detected</div><div class="v">${fmt(a.timestamps.detected)}</div><div class="d">${lag(a.timestamps.source, a.timestamps.detected)} after source</div></div>
+      <div><div class="k">Published</div><div class="v">${fmt(a.timestamps.published)}</div><div class="d">${lag(a.timestamps.detected, a.timestamps.published)} processing</div></div>
+    </div></div>
+    <div class="sec"><h3>Confirmed facts</h3><ul>${a.confirmed_facts.map(cite).join('')}</ul></div>
+    <div class="sec"><h3>What is new</h3><ul>${a.what_is_new ? cite(a.what_is_new) : '<li class="muted">—</li>'}</ul></div>
+    <div class="sec"><h3>Why it may matter</h3><ul>${a.why_it_may_matter.length ? a.why_it_may_matter.map(cite).join('') : '<li class="muted">—</li>'}</ul></div>
+    <div class="sec"><h3>Not established by the source</h3><ul>${a.not_established.map(x => `<li class="muted">${esc(x)}</li>`).join('')}</ul></div>
+    <div class="sec"><h3>Materiality ${a.materiality.toFixed(2)} · how it was scored</h3><div class="bars">${Object.entries(parts).map(([k, v]) => `<div class="bar-row"><span>${k.replace('_', ' ')}</span><div class="track"><div class="fill" style="width:${Math.round(v * 100)}%"></div></div><span class="n">${v.toFixed(2)}</span></div>`).join('') || '<span class="muted">breakdown not stored for this alert</span>'}</div></div>
+    <div class="sec"><h3>Evidence</h3>${a.evidence.map(e => `<div class="src-link"><span>${esc(e.label)}</span><span class="muted">·</span><span>${esc(e.source_id)}</span><span class="muted">·</span><span>${fmt(e.published_at)}</span><span class="spacer"></span><a href="${esc(e.url)}" target="_blank" rel="noopener">open ↗</a></div>`).join('')}</div>`;
+  summary();
+  body.querySelectorAll('.cite').forEach(c => c.onclick = () => { switchTab('evidence'); setTimeout(() => c.dataset.c.split(',').forEach(id => document.getElementById('c-' + id)?.classList.add('hl')), 150); });
+  const switchTab = v => { $('#dtabs').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); ({ summary, evidence: () => renderEvidence(a.event_id, body), decisions: () => renderDecisions(a.event_id, body), story: () => renderStory(a.story_id, body) })[v](); };
+  $('#dtabs').querySelectorAll('button').forEach(b => b.onclick = () => switchTab(b.dataset.v));
+  $('#copylink').onclick = () => { const u = new URL(location.href); u.searchParams.set('run', S.run); u.hash = a.row_id; navigator.clipboard?.writeText(u.toString()); toast('Link copied'); };
+  $('#wlbtn') && ($('#wlbtn').onclick = () => { toggleWl(a.entity.ticker); show(rowId); });
+  $('#showprev') && ($('#showprev').onclick = async () => { const v = (await api(`/v1/alerts/${a.alert_id}`)).versions; body.innerHTML = `<div class="sec"><h3>All versions</h3>${v.map(x => `<div class="box" style="margin-bottom:8px"><b>v${x.version}</b> · ${fmt(x.timestamps.published)}<br>${esc(x.headline)}<ul>${x.confirmed_facts.map(s => `<li>${esc(s.text)}</li>`).join('')}</ul></div>`).join('')}</div>`; });
+  if (matchMedia('(max-width:1100px)').matches) $('#detail').scrollIntoView({ behavior: 'smooth' });
 }
+function lag(a, b) { if (!a || !b) return '—'; const s = (new Date(b) - new Date(a)) / 1000; return s < 60 ? `${s.toFixed(0)}s` : s < 3600 ? `${(s / 60).toFixed(0)}m` : `${(s / 3600).toFixed(1)}h`; }
+async function renderEvidence(eventId, body) {
+  body.innerHTML = '<div class="muted">Loading…</div>';
+  const ev = await api(`/v1/events/${eventId}/evidence`);
+  body.innerHTML = `
+    <div class="sec"><h3>Documents</h3>${ev.documents.map(d => `<div class="src-link"><a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.meta?.form || 'document')} ↗</a><span class="muted">·</span><span>retrieved ${fmt(d.retrieved_at)}</span><span class="muted">·</span><code>${esc((d.content_hash || '').slice(0, 23))}…</code>${d.text_available ? ` <a href="#" data-doc="${d.doc_id}" class="showtext">view text</a>` : ''}</div>`).join('')}</div>
+    <div class="sec"><h3>Claims (${ev.claims.length}) — each value with the exact words it came from</h3>
+      ${ev.claims.map(c => `<div class="claim ${c.check_status}" id="c-${c.id}"><code>${esc(c.field)}</code> = <b>${esc(JSON.stringify(c.value))}</b>${c.unit ? ' ' + esc(c.unit) : ''}<br><span class="q">“${esc(c.span_text)}”</span> <span class="muted">[chars ${c.span[0]}–${c.span[1]}] · ${c.check_status} by ${esc(c.checked_by || c.extractor)}${c.reason ? ' · ' + esc(c.reason) : ''}</span></div>`).join('')}
+    </div><div id="doctext"></div>`;
+  body.querySelectorAll('.showtext').forEach(a => a.onclick = async e => { e.preventDefault(); const t = await api(`/v1/documents/${a.dataset.doc}/text`); $('#doctext').innerHTML = `<div class="sec"><h3>Document text</h3><pre class="box" style="white-space:pre-wrap;font-size:12px;max-height:380px;overflow:auto">${esc(t.text)}</pre></div>`; });
+}
+async function renderDecisions(eventId, body) {
+  const ev = await api(`/v1/events/${eventId}/evidence`);
+  body.innerHTML = `<div class="sec"><h3>Every stage's decision, in order</h3>${ev.decisions.map(d => `<div class="dec"><span class="st">${esc(d.stage)}</span><span class="o ${esc(d.outcome)}">${esc(d.outcome)}</span><span>${esc(d.reason)} <span class="muted">${d.rule_id ? '(' + esc(d.rule_id) + ')' : ''}</span></span></div>`).join('')}</div>
+    <div class="sec"><h3>Extracted fields</h3><pre class="box" style="font-size:12px;white-space:pre-wrap">${esc(JSON.stringify(ev.event.fields, null, 1))}</pre></div>`;
+}
+async function renderStory(storyId, body) {
+  if (!storyId) { body.innerHTML = '<div class="muted">No story</div>'; return; }
+  const st = await api(`/v1/stories/${storyId}`);
+  const items = st.timeline.sort((x, y) => (x.at || '').localeCompare(y.at || ''));
+  body.innerHTML = `<div class="sec"><h3>${esc(st.title)}</h3><div class="tl">${items.map(t => `<div class="it ${t.kind}"><div class="t">${fmt(t.at)} · ${t.kind}</div>${t.kind === 'alert' ? esc(t.headline) + (t.correction ? ' <span class="tag corr">correction</span>' : '') : `${TYPE[t.event_type] || t.event_type} · ${esc(STATUS[t.status] || t.status)}`}</div>`).join('')}</div></div>`;
+}
+async function showEvidenceOnly(eventId) {
+  const d = $('#detail .panel-b');
+  d.innerHTML = `<div class="d-head"><h2 style="font-size:15px">Event ${esc(eventId)}</h2><div class="meta">Not published — see the gate decision below.</div></div><div class="tabs" id="dtabs"><button class="on">Pipeline decisions</button><button>Evidence &amp; claims</button></div><div class="d-body" id="dbody"></div>`;
+  const body = $('#dbody'); renderDecisions(eventId, body);
+  const bs = $('#dtabs').querySelectorAll('button'); bs[0].onclick = () => { bs[0].classList.add('on'); bs[1].classList.remove('on'); renderDecisions(eventId, body); }; bs[1].onclick = () => { bs[1].classList.add('on'); bs[0].classList.remove('on'); renderEvidence(eventId, body); };
+}
+
+/* ---------- watchlist ---------- */
+function toggleWl(t) { if (!t) return; S.wl.has(t) ? S.wl.delete(t) : S.wl.add(t); lsSet('wl', JSON.stringify([...S.wl])); renderWl(); render(); }
+function renderWl() { $('#wl').innerHTML = [...S.wl].map(t => `<span class="chip on"><b>${esc(t)}</b><span class="x" data-t="${esc(t)}">×</span></span>`).join('') || '<span class="muted" style="font-size:12px">Empty</span>'; $('#wl').querySelectorAll('.x').forEach(x => x.onclick = () => toggleWl(x.dataset.t)); }
+
+/* ---------- live ---------- */
 function connect() {
-  if (es) es.close();
-  const u = new URL('/v1/stream', location.origin); u.searchParams.set('api_key', keyInput.value); u.searchParams.set('run', run);
-  es = new EventSource(u);
-  const st = document.getElementById('status');
-  es.onopen = () => st.textContent = 'live';
-  es.onerror = () => st.textContent = 'reconnecting…';
-  const onAlert = () => load();
-  es.addEventListener('alert.published', onAlert);
-  es.addEventListener('alert.corrected', onAlert);
+  if (S.es) S.es.close();
+  const u = new URL('/v1/stream', location.origin); u.searchParams.set('api_key', S.key); u.searchParams.set('run', S.run);
+  const es = S.es = new EventSource(u);
+  es.onopen = () => { $('#status').textContent = 'live stream connected'; $('#livedot').classList.add('live'); };
+  es.onerror = () => { $('#status').textContent = 'reconnecting…'; $('#livedot').classList.remove('live'); };
+  const onAlert = async e => {
+    const p = JSON.parse(e.data);
+    await Promise.all([load(), loadStats()]);
+    const el = document.querySelector(`.row[data-id="${p.row_id}"]`); el && el.classList.add('fresh');
+    toast((p.band === 'high' ? '🔴 ' : '') + p.headline, () => show(p.row_id));
+    if ($('#notif').checked && Notification.permission === 'granted' && (!S.wlonly || S.wl.has(p.entity_id))) new Notification('newsintel · ' + p.band, { body: p.headline });
+  };
+  es.addEventListener('alert.published', onAlert); es.addEventListener('alert.corrected', onAlert);
 }
-['market','etype','band'].forEach(id => document.getElementById(id).onchange = load);
-document.getElementById('entity').oninput = render;
-document.getElementById('reload').onclick = load;
-load(); connect();
+
+/* ---------- controls ---------- */
+function applyTheme(t) { document.documentElement.dataset.theme = t; lsSet('theme', t); }
+$('#theme').onclick = () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+$('#keybtn').onclick = () => { const k = prompt('API key (dev-reader-key or dev-reviewer-key)', S.key); if (k) { S.key = k; lsSet('key', k); boot(); } };
+$('#run').onchange = e => { S.run = e.target.value; const u = new URL(location.href); u.searchParams.set('run', S.run); history.replaceState(null, '', u); S.active = null; boot(); };
+$('#range').querySelectorAll('button').forEach(b => b.onclick = () => { S.range = b.dataset.v; $('#range').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); load(); });
+$('#bands').querySelectorAll('.chip').forEach(b => b.onclick = () => { b.classList.toggle('on'); b.classList.contains('on') ? S.bands.add(b.dataset.v) : S.bands.delete(b.dataset.v); load(); });
+const single = (sel, key) => $(sel).querySelectorAll('.chip').forEach(b => b.onclick = () => { S[key] = b.dataset.v; $(sel).querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); load(); });
+single('#markets', 'market'); single('#types', 'type');
+$('#corr').onchange = e => { S.corr = e.target.checked; load(); };
+$('#wlonly').onchange = e => { S.wlonly = e.target.checked; render(); };
+$('#notif').onchange = e => { if (e.target.checked && 'Notification' in window) Notification.requestPermission(); };
+$('#sort').onchange = e => { S.sort = e.target.value; load(); };
+let qt; $('#q').oninput = e => { clearTimeout(qt); qt = setTimeout(() => { S.q = e.target.value.trim(); load(); }, 250); };
+$('#feedtabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.view = b.dataset.v; $('#feedtabs').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); load(); });
+$('#reset').onclick = () => { S.bands = new Set(['high', 'medium', 'low']); S.market = ''; S.type = ''; S.corr = false; S.wlonly = false; S.q = ''; S.range = 'all'; $('#q').value = ''; $('#corr').checked = false; $('#wlonly').checked = false; document.querySelectorAll('#bands .chip').forEach(c => c.classList.add('on')); ['#markets', '#types'].forEach(s => document.querySelectorAll(s + ' .chip').forEach((c, i) => c.classList.toggle('on', i === 0))); $('#range').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.v === 'all')); load(); };
+$('#csv').onclick = () => {
+  const rows = visibleAlerts(); const cols = ['published', 'band', 'status', 'market', 'event_type', 'ticker', 'entity', 'headline', 'source_url', 'version'];
+  const line = a => [a.timestamps.published, a.materiality_band, a.status, a.market, a.event_type, a.entity.ticker || '', a.entity.name, a.headline, a.evidence[0]?.url || '', a.version].map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',');
+  const blob = new Blob([cols.join(',') + '\n' + rows.map(line).join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `newsintel-${S.run}-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+};
+document.addEventListener('keydown', e => {
+  if (e.target.matches('input, textarea, select')) { if (e.key === 'Escape') e.target.blur(); return; }
+  if (e.key === '/') { e.preventDefault(); $('#q').focus(); return; }
+  const rows = [...document.querySelectorAll('#feed .row[data-id]')]; if (!rows.length) return;
+  let i = rows.findIndex(r => r.dataset.id === S.active);
+  if (e.key === 'j') { i = Math.min(i + 1, rows.length - 1); show(rows[i].dataset.id); rows[i].scrollIntoView({ block: 'nearest' }); }
+  if (e.key === 'k') { i = Math.max(i - 1, 0); show(rows[i].dataset.id); rows[i].scrollIntoView({ block: 'nearest' }); }
+  if (e.key === 'e' && S.active) document.querySelector('#dtabs button[data-v="evidence"]')?.click();
+});
+boot().then(() => { const h = location.hash.slice(1); if (h) show(h); });
 </script>
 </body>
 </html>
