@@ -28,7 +28,7 @@ def _d(iso: str | None) -> str:
     if not iso:
         return ""
     d = date.fromisoformat(iso)
-    return d.strftime("%B %-d, %Y")
+    return f"{d.strftime('%B')} {d.day}, {d.year}"  # no %-d: not supported by the Windows C runtime
 
 
 def headline(ev: Event, ctx: ContextResult) -> str:
